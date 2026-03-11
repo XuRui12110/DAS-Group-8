@@ -14,7 +14,7 @@ To answer this, we utilize a **Generalized Linear Model (GLM)**, specifically **
 | Name | Student ID | GitHub Username |
 | :--- | :--- | :--- |
 | [Rui Xu] | [3091749X] | [XuRui12110] |
-| [Zhenzi Wang] | [3044756W] | [waiting for filling] |
+| [Zhenzi Wang] | [3044756W] | [Cecilia-wangzz] |
 | [Zhiyao Wang] | [3088880W] | [CamileWang] |
 | [Ziyang Wang] | [3075362W] | [Xuexiaoban12138] |
 | [Lixing Liu] | [2996645L] | [ArashiLlx] |
