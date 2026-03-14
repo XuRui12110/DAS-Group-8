@@ -366,6 +366,53 @@ Some genres appear to have very high or very low proportions of highly rated fil
 
 However, this may partly be due to the small number of films in certain genres, which can lead to unstable proportions. Overall, while some variation exists across genres, genre alone may not strongly determine whether a film receives a high IMDB rating.
 
+### Film budget and IMDB Ratings
+
+Film budget may also influence how audiences perceive a movie. 
+To explore this possibility, the distribution of film budgets and their relationship with IMDB ratings were examined.
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+#| label: tbl-explo-budget1
+
+ggplot(movies, aes(x = budget)) +
+  geom_histogram(bins = 30, fill = "brown", color = "white") +
+  labs(
+    title = "Distribution of Film Budgets",
+    x = "Budget",
+    y = "Number of Films"
+  )
+```
+@fig-explo-budget1 shows the distribution of film budgets and indicates that most films fall within a moderate budget range. 
+However, the distribution alone does not provide clear evidence that budget strongly influences whether a film receives a high IMDb rating.
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+#| label: tbl-explo-budget2
+
+budget_cor <- data.frame(
+  Relationship = c("Budget vs IMDB rating", "Budget vs High rating (rating > 7)"),
+  Correlation = c(
+    cor(movies$budget, movies$rating),
+    cor(movies$budget, movies$high_rating)
+  )
+)
+
+knitr::kable(
+  budget_cor,
+  digits = 4,
+  caption = "Correlation between film budget and IMDB ratings"
+)
+```
+@tbl-explo-budget2 shows the correlations between film budget and IMDb ratings. 
+Both correlations are relatively weak, suggesting that budget is not strongly associated with film ratings.
+
+Therefore, budget was not included as a predictor in the final logistic regression model.
+
 ## Selection of Candidate Variables
 
 Based on the exploratory analysis, several variables were identified as potential predictors of whether a film receives an IMDb rating greater than 7. These variables include:\

@@ -396,6 +396,62 @@ Table&nbsp;4
 <p>Some genres appear to have very high or very low proportions of highly rated films.</p>
 <p>However, this may partly be due to the small number of films in certain genres, which can lead to unstable proportions. Overall, while some variation exists across genres, genre alone may not strongly determine whether a film receives a high IMDB rating.</p>
 </section>
+<section id="film-budget-and-imdb-ratings" class="level3">
+<h3 class="anchored" data-anchor-id="film-budget-and-imdb-ratings">Film budget and IMDB Ratings</h3>
+<p>Film budget may also influence how audiences perceive a movie. To explore this possibility, the distribution of film budgets and their relationship with IMDB ratings were examined.</p>
+<div class="cell">
+<div id="tbl-explo-budget1" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl quarto-uncaptioned" id="tbl-explo-budget1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;5
+</figcaption>
+<div aria-describedby="tbl-explo-budget1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Group_8_Analysis_files/figure-html/tbl-explo-budget1-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p><strong>?@fig-explo-budget1</strong> shows the distribution of film budgets and indicates that most films fall within a moderate budget range. However, the distribution alone does not provide clear evidence that budget strongly influences whether a film receives a high IMDb rating.</p>
+<div class="cell">
+<div id="tbl-explo-budget2" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-explo-budget2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;6: Correlation between film budget and IMDB ratings
+</figcaption>
+<div aria-describedby="tbl-explo-budget2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Relationship</th>
+<th style="text-align: right;">Correlation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Budget vs IMDB rating</td>
+<td style="text-align: right;">0.2359</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Budget vs High rating (rating &gt; 7)</td>
+<td style="text-align: right;">0.2543</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p><a href="#tbl-explo-budget2" class="quarto-xref">Table&nbsp;6</a> shows the correlations between film budget and IMDb ratings. Both correlations are relatively weak, suggesting that budget is not strongly associated with film ratings.</p>
+<p>Therefore, budget was not included as a predictor in the final logistic regression model.</p>
+</section>
 </section>
 <section id="selection-of-candidate-variables" class="level2">
 <h2 class="anchored" data-anchor-id="selection-of-candidate-variables">Selection of Candidate Variables</h2>
@@ -414,7 +470,7 @@ Table&nbsp;4
 <div id="tbl-glm-full" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-glm-full-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;5: Logistic regression results (full model)
+Table&nbsp;7: Logistic regression results (full model)
 </figcaption>
 <div aria-describedby="tbl-glm-full-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
@@ -506,7 +562,7 @@ Table&nbsp;5: Logistic regression results (full model)
 </figure>
 </div>
 </div>
-<p>The logistic regression results are summarized in <a href="#tbl-glm-full" class="quarto-xref">Table&nbsp;5</a>. Film length, release year, and several genres show statistically significant associations with the probability of receiving a high IMDB rating (p &lt; 0.05).</p>
+<p>The logistic regression results are summarized in <a href="#tbl-glm-full" class="quarto-xref">Table&nbsp;7</a>. Film length, release year, and several genres show statistically significant associations with the probability of receiving a high IMDB rating (p &lt; 0.05).</p>
 <p>However, the number of votes is not statistically significant (p = 0.949). Therefore, the variable votes was removed and a simplified model was fitted.</p>
 <section id="simplified-logistic-regression-model" class="level3">
 <h3 class="anchored" data-anchor-id="simplified-logistic-regression-model">Simplified Logistic Regression Model</h3>
@@ -515,7 +571,7 @@ Table&nbsp;5: Logistic regression results (full model)
 <div id="tbl-glm-final" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-glm-final-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;6: Logistic regression results (simplified model)
+Table&nbsp;8: Logistic regression results (simplified model)
 </figcaption>
 <div aria-describedby="tbl-glm-final-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
@@ -600,7 +656,7 @@ Table&nbsp;6: Logistic regression results (simplified model)
 </figure>
 </div>
 </div>
-<p><a href="#tbl-glm-final" class="quarto-xref">Table&nbsp;6</a> indicates that film length and release year are significant predictors of whether a film receives a high IMDb rating (p &lt; 0.001).</p>
+<p><a href="#tbl-glm-final" class="quarto-xref">Table&nbsp;8</a> indicates that film length and release year are significant predictors of whether a film receives a high IMDb rating (p &lt; 0.001).</p>
 <p>Longer films tend to be less likely to receive ratings above 7, while more recently released films are slightly more likely to receive higher ratings.</p>
 <p>In addition, differences across genres suggest that the likelihood of receiving high ratings varies depending on film type.</p>
 </section>
@@ -611,7 +667,7 @@ Table&nbsp;6: Logistic regression results (simplified model)
 <div id="tbl-glm-sum" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-glm-sum-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;7: Comparison of coefficients between full and simplified models
+Table&nbsp;9: Comparison of coefficients between full and simplified models
 </figcaption>
 <div aria-describedby="tbl-glm-sum-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
@@ -681,7 +737,7 @@ Table&nbsp;7: Comparison of coefficients between full and simplified models
 </figure>
 </div>
 </div>
-<p><a href="#tbl-glm-sum" class="quarto-xref">Table&nbsp;7</a> compares the estimated coefficients between the full model and the simplified model.</p>
+<p><a href="#tbl-glm-sum" class="quarto-xref">Table&nbsp;9</a> compares the estimated coefficients between the full model and the simplified model.</p>
 <p>The results show that removing the non-significant variable (votes) does not substantially change the estimated coefficients of the remaining predictors. This suggests that the simplified model provides a more parsimonious representation while maintaining similar estimated effects.</p>
 </section>
 </section>
@@ -693,7 +749,7 @@ Table&nbsp;7: Comparison of coefficients between full and simplified models
 <div id="tbl-pred" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl quarto-uncaptioned" id="tbl-pred-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;8
+Table&nbsp;10
 </figcaption>
 <div aria-describedby="tbl-pred-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
@@ -707,7 +763,7 @@ Table&nbsp;8
 </figure>
 </div>
 </div>
-<p><a href="#tbl-pred" class="quarto-xref">Table&nbsp;8</a> shows the predicted probability of receiving a high IMDb rating across different film lengths for selected genres.</p>
+<p><a href="#tbl-pred" class="quarto-xref">Table&nbsp;10</a> shows the predicted probability of receiving a high IMDb rating across different film lengths for selected genres.</p>
 <p>Release year is not shown in the figure because it was held constant at its mean value when calculating predicted probabilities. This allows the effects of film length and genre on the predicted probability to be visualized more clearly while still using the full simplified model.</p>
 <p>The predicted probability generally decreases as film length increases, indicating that longer films are less likely to receive ratings above 7. Differences across genres are also evident, with some genres consistently showing higher predicted probabilities than others across the range of film lengths.</p>
 </section>
@@ -718,7 +774,7 @@ Table&nbsp;8
 <div id="tbl-odds_ratio" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-odds_ratio-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;9: Odds ratios from the simplified logistic regression model
+Table&nbsp;11: Odds ratios from the simplified logistic regression model
 </figcaption>
 <div aria-describedby="tbl-odds_ratio-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
@@ -793,7 +849,7 @@ Table&nbsp;9: Odds ratios from the simplified logistic regression model
 </figure>
 </div>
 </div>
-<p><a href="#tbl-odds_ratio" class="quarto-xref">Table&nbsp;9</a> presents the odds ratios from the simplified logistic regression model.</p>
+<p><a href="#tbl-odds_ratio" class="quarto-xref">Table&nbsp;11</a> presents the odds ratios from the simplified logistic regression model.</p>
 <p>Film length shows an odds ratio below 1, indicating that longer films are less likely to receive ratings above 7. In contrast, more recent films and some genres have higher odds of receiving high ratings.</p>
 </section>
 <section id="model-limitation" class="level2">
