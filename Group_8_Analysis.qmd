@@ -14,57 +14,144 @@ library(gt)
 library(broom)
 library(knitr)
 library(dplyr)
-
+library(tibble)
 ```
 
-# The Dataset {#sec-dataset}
+# 1 The Dataset {#sec-dataset}
 
-The dataset used in this analysis comes from the IMDB film database.\
-It contains information about films that have been released in cinemas.
+The dataset used in this analysis comes from the IMDB film database, which provides a variety of information on films that have been released. The data used here represent a subset of the original database.
 
-For each film, several characteristics are recorded, including the year of release, film length, production budget, number of viewer votes, film genre, and IMDb rating.
+## 1.1 Inspect the dataset {#sec-insp}
 
 ```{r}
 #| echo: false
 #| warning: false
 #| message: false
+
 # Load the dataset from the CSV file
 movies <- read.csv("dataset08.csv")
 ```
 
-# Inspect the dataset {#sec-insp}
-
-After loading the dataset, we inspect its structure to understand the variables contained in the dataset and their data types.
-
-The dataset contains several variables describing characteristics of films, including release year, film length, production budget, number of votes, film genre, and IMDB rating. These variables will later be used as predictors in the statistical model.
+After loading the dataset, the first few observations are displayed to provide an initial overview of the data.
 
 ```{r}
 #| echo: false
 #| warning: false
 #| message: false
 
-#Display the first few rows of the dataset
+#Display the first six rows of the dataset
 head(movies)
 ```
 
-From the structure output, we can observe that variables such as year, length, budget, votes, and rating are numeric variables, while genre is a categorical variable describing the type of film.
+The structure of the dataset is examined to identify the variables and their data types.
 
 ```{r}
 #| echo: false
 #| warning: false
 #| message: false
 #| results: false
+
 #Check the structure of the dataset
 str(movies)
+```
+
+Based on the structure output, the dataset contains 2,847 observations and seven variables. The variables include a mixture of integer, numeric, and character types. Specifically, film_id, year, length, and votes are stored as integer variables, while budget and rating are numeric variables. The genre variable is recorded as a character variable representing the film category. It also suggests that some variables (e.g., length) contain missing values (NA).
+
+
+To further explore the distribution of the variables in the dataset, summary statistics are computed.
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+#| results: false
+
 # Summary statistics of variables
 summary(movies)
 ```
 
+Table @tbl-numvars presents the summary statistics for the numerical variables included in the analysis.
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+
+vars <- movies %>% select(film_id, year, length, budget, votes, rating)
+
+numeric_stats <- rbind(
+  summarise(vars, across(everything(), ~min(.,            na.rm = TRUE))),
+  summarise(vars, across(everything(), ~quantile(., 0.25, na.rm = TRUE))),
+  summarise(vars, across(everything(), ~median(.,         na.rm = TRUE))),
+  summarise(vars, across(everything(), ~mean(.,           na.rm = TRUE))),
+  summarise(vars, across(everything(), ~quantile(., 0.75, na.rm = TRUE))),
+  summarise(vars, across(everything(), ~max(.,            na.rm = TRUE))),
+  summarise(vars, across(everything(), ~sum(is.na(.))))
+) %>%
+  t() %>%
+  as.data.frame() %>%
+  setNames(c("Min", "1st Qu", "Median", "Mean", "3rd Qu", "Max", "Missing")) %>%
+  rownames_to_column("Variable") %>%
+  mutate(across(-Variable, ~round(as.numeric(.), 2)))
+
+kable(numeric_stats, caption = "Summary statistics of numerical variables")
+```
+
+As shown in Table @tbl-numvars, the release year of the films spans from 1898 to 2005, suggesting that the dataset covers a long historical period. Film length varies ranging from 1 to 480 minutes. The production budget ranges between 2.5 and 22.3, while the number of votes shows particularly large variation, with a maximum value of 149,494. In contrast, film ratings appear to be relatively concentrated, with values ranging from 0.8 to 9.2. It is also noteworthy that the variable *length* contains 131 missing observations, whereas the remaining numerical variables do not exhibit missing values.
+
+
+In addition to the numerical variables, the distribution of film genres is also examined. Table @tbl-genre reports the number of films in each genre.
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+
+genre_summary <- movies %>%
+  count(genre, sort = TRUE)
+
+kable(genre_summary, caption = "Number of films by genre")
+```
+
+Table @tbl-genre presents the distribution of films across seven genres in the dataset. 
+Action, Drama, and Comedy account for the largest number of observations, whereas genres such as Animation, Documentary, Short, and Romance appear less frequently. 
+This suggests that the dataset is dominated by a few major genres.
+
+
+## 1.2 Variable descriptions
+
+In this dataset, each film is represented by several variables describing its main characteristics. 
+Table @tbl-var-desc shows the main variables used, including their data types and brief descriptions.
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+
+var_desc <- data.frame(
+  Variable = c("film_id", "year", "length", "budget", "votes", "genre", "rating"),
+  Type = c("Integer", "Integer", "Numeric", "Numeric", "Integer", "Character", "Numeric"),
+  Description = c(
+    "The unique identifier for the film",
+    "Year of release of the film in cinemas",
+    "Duration (in minutes)",
+    "Budget for the films production (in $1000000s)",
+    "Number of positive votes received by viewers",
+    "Genre of the film",
+    "IMDB rating from 0-10"
+  )
+)
+
+kable(var_desc)
+```
+
+The dataset contains both numerical and categorical variables describing different aspects of each film. 
 These variables will later be used as predictors in the statistical model.
 
-# Which film properties influence whether a film receives an IMDB rating greater than 7? {#sec-study}
 
-## Research Question
+# 2 Which film properties influence whether a film receives an IMDB rating greater than 7? {#sec-study}
+
+## 2.1 Research Question
 
 The main aim of this analysis is to investigate which characteristics of films influence whether a film receives an IMDB rating greater than 7.
 
@@ -72,7 +159,7 @@ In particular, we are interested in examining how variables such as film length,
 
 To address this question, we will use a Generalised Linear Model (GLM) with a logistic link function.
 
-## Exploratory Plot
+## 2.2 Exploratory Plot
 
 Before fitting a statistical model, it is useful to explore the relationships between the response variable and potential predictors.
 
