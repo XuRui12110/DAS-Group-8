@@ -64,11 +64,20 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<section id="sec-study" class="level1">
+<h1>Which film properties influence whether a film receives an IMDB rating greater than 7?</h1>
+</section>
+<section id="research-question" class="level1">
+<h1>1 Research Question</h1>
+<p>The aim of this analysis is to examine which film characteristics are associated with whether a film receives an IMDb rating greater than 7 or not.</p>
+<p>To address this question, a binary response variable is considered, taking the value 1 if a film has an IMDb rating above 7 and 0 otherwise. The analysis focuses on whether release year, film length, production budget, number of votes, and genre are related to the probability of receiving a high rating.</p>
+<p>Given that the response variable is binary, the analysis employs logistic regression as part of the Generalised Linear Model framework.</p>
+</section>
 <section id="sec-dataset" class="level1">
-<h1>1 The Dataset</h1>
+<h1>2 The Dataset</h1>
 <p>The dataset used in this analysis comes from the IMDB film database, which provides a variety of information on films that have been released. The data used here represent a subset of the original database.</p>
 <section id="sec-insp" class="level2">
-<h2 class="anchored" data-anchor-id="sec-insp">1.1 Inspect the dataset</h2>
+<h2 class="anchored" data-anchor-id="sec-insp">2.1 Inspect the dataset</h2>
 <p>After loading the dataset, the first few observations are displayed to provide an initial overview of the data.</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
@@ -84,10 +93,15 @@ ul.task-list li input[type="checkbox"] {
 <p>The structure of the dataset is examined to identify the variables and their data types.</p>
 <p>Based on the structure output, the dataset contains 2,847 observations and seven variables. The variables include a mixture of integer, numeric, and character types. Specifically, film_id, year, length, and votes are stored as integer variables, while budget and rating are numeric variables. The genre variable is recorded as a character variable representing the film category. It also suggests that some variables (e.g., length) contain missing values (NA).</p>
 <p>To further explore the distribution of the variables in the dataset, summary statistics are computed.</p>
-<p>Table <strong>?@tbl-numvars</strong> presents the summary statistics for the numerical variables included in the analysis.</p>
 <div class="cell">
+<div id="tbl-numvars" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-numvars-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;1: Summary statistics for numerical variables
+</figcaption>
+<div aria-describedby="tbl-numvars-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
-<table class="caption-top table table-sm table-striped small">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
 <caption>Summary statistics of numerical variables</caption>
 <colgroup>
 <col style="width: 13%">
@@ -176,11 +190,21 @@ ul.task-list li input[type="checkbox"] {
 </table>
 </div>
 </div>
-<p>As shown in Table <strong>?@tbl-numvars</strong>, the release year of the films spans from 1898 to 2005, suggesting that the dataset covers a long historical period. Film length varies ranging from 1 to 480 minutes. The production budget ranges between 2.5 and 22.3, while the number of votes shows particularly large variation, with a maximum value of 149,494. In contrast, film ratings appear to be relatively concentrated, with values ranging from 0.8 to 9.2. It is also noteworthy that the variable <em>length</em> contains 131 missing observations, whereas the remaining numerical variables do not exhibit missing values.</p>
-<p>In addition to the numerical variables, the distribution of film genres is also examined. Table <strong>?@tbl-genre</strong> reports the number of films in each genre.</p>
+</figure>
+</div>
+</div>
+<p>Table <a href="#tbl-numvars" class="quarto-xref">Table&nbsp;1</a> presents the summary statistics for the numerical variables included in the analysis.</p>
+<p>As shown in Table <a href="#tbl-numvars" class="quarto-xref">Table&nbsp;1</a>, the release year of the films spans from 1898 to 2005, suggesting that the dataset covers a long historical period. Film length varies ranging from 1 to 480 minutes. The production budget ranges between 2.5 and 22.3, while the number of votes shows particularly large variation, with a maximum value of 149,494. In contrast, film ratings appear to be relatively concentrated, with values ranging from 0.8 to 9.2. It is also noteworthy that the variable <em>length</em> contains 131 missing observations, whereas the remaining numerical variables do not exhibit missing values.</p>
+<p>In addition to the numerical variables, the distribution of film genres is also examined.</p>
 <div class="cell">
+<div id="tbl-genre" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-genre-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;2: Distribution of films across genres
+</figcaption>
+<div aria-describedby="tbl-genre-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
-<table class="caption-top table table-sm table-striped small">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
 <caption>Number of films by genre</caption>
 <thead>
 <tr class="header">
@@ -221,14 +245,24 @@ ul.task-list li input[type="checkbox"] {
 </table>
 </div>
 </div>
-<p>Table <strong>?@tbl-genre</strong> presents the distribution of films across seven genres in the dataset. Action, Drama, and Comedy account for the largest number of observations, whereas genres such as Animation, Documentary, Short, and Romance appear less frequently. This suggests that the dataset is dominated by a few major genres.</p>
+</figure>
+</div>
+</div>
+<p>Table <a href="#tbl-genre" class="quarto-xref">Table&nbsp;2</a> reports the number of films in each genre.</p>
+<p>Table <a href="#tbl-genre" class="quarto-xref">Table&nbsp;2</a> presents the distribution of films across seven genres in the dataset. Action, Drama, and Comedy account for the largest number of observations, whereas genres such as Animation, Documentary, Short, and Romance appear less frequently. This suggests that the dataset is dominated by a few major genres.</p>
 </section>
 <section id="variable-descriptions" class="level2">
-<h2 class="anchored" data-anchor-id="variable-descriptions">1.2 Variable descriptions</h2>
+<h2 class="anchored" data-anchor-id="variable-descriptions">2.2 Variable descriptions</h2>
 <p>In this dataset, each film is represented by several variables describing its main characteristics. Table <strong>?@tbl-var-desc</strong> shows the main variables used, including their data types and brief descriptions.</p>
 <div class="cell">
+<div id="tbl-variable" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-variable-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;3: Description of variables in the dataset
+</figcaption>
+<div aria-describedby="tbl-variable-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
-<table class="caption-top table table-sm table-striped small">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
 <thead>
 <tr class="header">
 <th style="text-align: left;">Variable</th>
@@ -276,22 +310,79 @@ ul.task-list li input[type="checkbox"] {
 </table>
 </div>
 </div>
+</figure>
+</div>
+</div>
+<p>Table <a href="#tbl-variable" class="quarto-xref">Table&nbsp;3</a> shows the variables included in the dataset.</p>
 <p>The dataset contains both numerical and categorical variables describing different aspects of each film. These variables will later be used as predictors in the statistical model.</p>
 </section>
 </section>
-<section id="sec-study" class="level1">
-<h1>2 Which film properties influence whether a film receives an IMDB rating greater than 7?</h1>
-<section id="research-question" class="level2">
-<h2 class="anchored" data-anchor-id="research-question">2.1 Research Question</h2>
-<p>The main aim of this analysis is to investigate which characteristics of films influence whether a film receives an IMDB rating greater than 7.</p>
-<p>In particular, we are interested in examining how variables such as film length, production budget, number of votes, genre, and release year may affect the probability that a film achieves a high rating.</p>
-<p>To address this question, we will use a Generalised Linear Model (GLM) with a logistic link function.</p>
+<section id="exploratory-analysis" class="level1">
+<h1>3 Exploratory Analysis</h1>
+<p>Before fitting the GLM, exploratory analysis was carried out to examine the relationships between the response variable and the candidate predictors. This helps to identify broad patterns in the data and provides preliminary support for variable selection in the modelling stage.</p>
+<section id="release-year-and-high-imdb-ratings" class="level3">
+<h3 class="anchored" data-anchor-id="release-year-and-high-imdb-ratings">3.1 Release Year and High IMDB Ratings</h3>
+<p>Release year may influence how films are rated. To explore this, films were grouped by release decade and the proportion of highly rated films (IMDB rating &gt; 7) was calculated for each group.</p>
+<p>Very early decades contained only a small number of films, so films released before 1910 were excluded from this plot to provide a more stable comparison across release periods.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-explo-year" class="quarto-float quarto-figure quarto-figure-center anchored" width="672">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-explo-year-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="Group_8_Analysis_files/figure-html/fig-explo-year-1.png" id="fig-explo-year" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-explo-year-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Figure <a href="#fig-explo-year" class="quarto-xref">Figure&nbsp;1</a> shows the proportion of highly rated films across release decades. The dashed horizontal line represents the overall proportion of films with ratings above 7 in the dataset.</p>
+<p>The proportion of highly rated films appears to vary across decades. Earlier decades tend to show somewhat higher proportions, while films released between the 1950s and 1980s appear to have relatively lower proportions. However, some early decades contain relatively few films, so these proportions should be interpreted with caution.</p>
 </section>
-<section id="exploratory-plot" class="level2">
-<h2 class="anchored" data-anchor-id="exploratory-plot">2.2 Exploratory Plot</h2>
-<p>Before fitting a statistical model, it is useful to explore the relationships between the response variable and potential predictors.</p>
+<section id="film-length-and-imdb-ratings" class="level3">
+<h3 class="anchored" data-anchor-id="film-length-and-imdb-ratings">3.2 Film Length and IMDB Ratings</h3>
+<p>Film length may influence audience perception of a movie. To explore this relationship, film length is grouped into five categories using quantile-based cut-offs so that each group contains approximately 20% of the films in the dataset.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-explo-length" class="quarto-float quarto-figure quarto-figure-center anchored" width="672">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-explo-length-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="Group_8_Analysis_files/figure-html/fig-explo-length-1.png" id="fig-explo-length" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-explo-length-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Figure <a href="#fig-explo-length" class="quarto-xref">Figure&nbsp;2</a> shows the proportion of highly rated films across film length groups. The overall proportion of films with ratings above 7 is shown by the dashed horizontal line.</p>
+<p>Very short films appear to have a higher proportion of ratings above 7 than the other length groups, while the remaining groups are more similar to one another. This suggests that film length may be associated with high ratings, although the pattern may partly reflect differences in genre composition across length groups.</p>
+</section>
+<section id="production-budget-and-imdb-ratings" class="level3">
+<h3 class="anchored" data-anchor-id="production-budget-and-imdb-ratings">3.3 Production budget and IMDB Ratings</h3>
+<p>Film budget may also influence how audiences perceive a movie. To explore this possibility, the distribution of film budgets and their relationship with IMDB ratings were examined.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-explo-budget1" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-explo-budget1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="Group_8_Analysis_files/figure-html/fig-explo-budget1-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-explo-budget1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3: Relationship between film budget and the probability of receiving a high IMDb rating
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Figure <strong>?@fig-explo-budget</strong> shows the relationship between film production budget and the probability of receiving a high IMDb rating. Each point represents an individual film, and the red curve corresponds to the fitted logistic regression line.</p>
+<p>The fitted curve shows a gradual upward trend, suggesting that films with larger budgets may be somewhat more likely to receive high ratings. This suggests that budget may be positively associated with the likelihood of a film receiving a high rating.</p>
+</section>
 <section id="votes-and-high-imdb-ratings" class="level3">
-<h3 class="anchored" data-anchor-id="votes-and-high-imdb-ratings">Votes and High IMDB Ratings</h3>
+<h3 class="anchored" data-anchor-id="votes-and-high-imdb-ratings">3.4 Votes and High IMDB Ratings</h3>
 <p>The number of votes may reflect a film’s popularity or level of audience engagement. To explore this relationship, films were grouped based on their number of votes and the proportion of highly rated films (IMDB rating &gt; 7) was calculated for each group.</p>
 <p>The approximate vote ranges for the five groups are:<br>
 Very Low: 5-10 votes<br>
@@ -300,158 +391,41 @@ Medium: 20-47 votes<br>
 High: 47-174 votes<br>
 Very High: above 174 votes.</p>
 <div class="cell">
-<div id="tbl-explo-votes" class="cell quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-tbl figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-explo-votes-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;1: Proportion of High IMDB Ratings Across Vote Groups
-</figcaption>
-<div aria-describedby="tbl-explo-votes-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="Group_8_Analysis_files/figure-html/tbl-explo-votes-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
+<div id="fig-explo-votes" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-explo-votes-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="Group_8_Analysis_files/figure-html/fig-explo-votes-1.png" class="img-fluid figure-img" width="672">
 </div>
-</div>
-</div>
-</figure>
-</div>
-</div>
-<p><a href="#tbl-explo-votes" class="quarto-xref">Table&nbsp;1</a> shows the proportion of highly rated films across different vote groups. The dashed horizontal line represents the overall proportion of highly rated films in the dataset.</p>
-<p>The plot suggests that the proportion of highly rated films varies across vote groups.</p>
-<p>Some groups appear to have slightly higher proportions of highly rated films than others, although the differences are not very large.</p>
-</section>
-<section id="film-length-and-imdb-ratings" class="level3">
-<h3 class="anchored" data-anchor-id="film-length-and-imdb-ratings">Film Length and IMDB Ratings</h3>
-<p>Film length may influence audience perception of a movie. To explore this relationship, film length is grouped into five categories using quantile-based cut-offs so that each group contains approximately 20% of the films in the dataset.</p>
-<div class="cell">
-<div id="tbl-explo-length" class="cell quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-tbl figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl quarto-uncaptioned" id="tbl-explo-length-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;2
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-explo-votes-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4: Proportion of High IMDB Ratings Across Vote Groups
 </figcaption>
-<div aria-describedby="tbl-explo-length-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="Group_8_Analysis_files/figure-html/tbl-explo-length-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
-</figure>
-</div>
-</div>
-<p><a href="#tbl-explo-length" class="quarto-xref">Table&nbsp;2</a> presents the distribution of IMDB ratings across film length groups using boxplots. The median ratings and overall distributions appear relatively similar across most groups.</p>
-<p>Although very short films appear to have slightly higher median ratings, the overall differences between groups are not substantial. This suggests that film length may not have a strong relationship with IMDb ratings.</p>
-</section>
-<section id="release-year-and-high-imdb-ratings" class="level3">
-<h3 class="anchored" data-anchor-id="release-year-and-high-imdb-ratings">Release Year and High IMDB Ratings</h3>
-<p>Release year may influence how films are rated. To explore this, films were grouped by release decade and the proportion of highly rated films (IMDB rating &gt; 7) was calculated for each group.</p>
-<p>Very early decades contained only a small number of films, so films released before 1910 were excluded from this plot to provide a more stable comparison across release periods.</p>
-<div class="cell">
-<div id="tbl-explo-year" class="cell quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-tbl figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl quarto-uncaptioned" id="tbl-explo-year-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;3
-</figcaption>
-<div aria-describedby="tbl-explo-year-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="Group_8_Analysis_files/figure-html/tbl-explo-year-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
-</figure>
-</div>
-</div>
-<p><a href="#tbl-explo-year" class="quarto-xref">Table&nbsp;3</a> shows the proportion of highly rated films across different release decades. The dashed horizontal line represents the overall proportion of highly rated films in the dataset.</p>
-<p>Earlier decades appear to have slightly higher proportions of highly rated films, while films released from the 1950s to the 1980s show relatively lower proportions.</p>
-<p>However, the differences between decades are not extremely large, indicating that release year alone may not strongly determine whether a film receives a high IMDb rating.</p>
+<p>Figure <a href="#fig-explo-votes" class="quarto-xref">Figure&nbsp;4</a> shows the proportion of highly rated films across vote groups. The dashed horizontal line represents the overall proportion of films with ratings above 7 in the dataset.</p>
+<p>The proportion of highly rated films appears to vary across vote groups, with lower-vote groups showing slightly higher proportions than higher-vote groups. Although the pattern is not especially strong, it suggests that the relationship between vote count and high ratings may not be straightforward.</p>
 </section>
 <section id="film-genre-and-high-imdb-ratings" class="level3">
-<h3 class="anchored" data-anchor-id="film-genre-and-high-imdb-ratings">Film Genre and High IMDB Ratings</h3>
+<h3 class="anchored" data-anchor-id="film-genre-and-high-imdb-ratings">3.5 Film Genre and High IMDB Ratings</h3>
 <p>Film genre may influence how movies are perceived by audiences. Different genres may attract different audiences and may vary in storytelling style, which could affect IMDB ratings.</p>
 <div class="cell">
-<div id="tbl-explo-genre" class="cell quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-tbl figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl quarto-uncaptioned" id="tbl-explo-genre-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;4
-</figcaption>
-<div aria-describedby="tbl-explo-genre-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="Group_8_Analysis_files/figure-html/tbl-explo-genre-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
+<div id="fig-explo-genre" class="quarto-float quarto-figure quarto-figure-center anchored" width="672">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-explo-genre-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="Group_8_Analysis_files/figure-html/fig-explo-genre-1.png" id="fig-explo-genre" class="img-fluid figure-img" width="672">
 </div>
-</div>
-</div>
-</figure>
-</div>
-</div>
-<p><a href="#tbl-explo-genre" class="quarto-xref">Table&nbsp;4</a> shows the proportion of highly rated films across different genres. The dashed horizontal line represents the overall proportion of highly rated films in the dataset.</p>
-<p>Some genres appear to have very high or very low proportions of highly rated films.</p>
-<p>However, this may partly be due to the small number of films in certain genres, which can lead to unstable proportions. Overall, while some variation exists across genres, genre alone may not strongly determine whether a film receives a high IMDB rating.</p>
-</section>
-<section id="film-budget-and-imdb-ratings" class="level3">
-<h3 class="anchored" data-anchor-id="film-budget-and-imdb-ratings">Film budget and IMDB Ratings</h3>
-<p>Film budget may also influence how audiences perceive a movie. To explore this possibility, the distribution of film budgets and their relationship with IMDB ratings were examined.</p>
-<div class="cell">
-<div id="tbl-explo-budget1" class="cell quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-tbl figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl quarto-uncaptioned" id="tbl-explo-budget1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;5
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-explo-genre-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5
 </figcaption>
-<div aria-describedby="tbl-explo-budget1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="Group_8_Analysis_files/figure-html/tbl-explo-budget1-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
-</figure>
-</div>
-</div>
-<p><strong>?@fig-explo-budget1</strong> shows the distribution of film budgets and indicates that most films fall within a moderate budget range. However, the distribution alone does not provide clear evidence that budget strongly influences whether a film receives a high IMDb rating.</p>
-<div class="cell">
-<div id="tbl-explo-budget2" class="cell quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-tbl figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-explo-budget2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;6: Correlation between film budget and IMDB ratings
-</figcaption>
-<div aria-describedby="tbl-explo-budget2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="cell-output-display">
-<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Relationship</th>
-<th style="text-align: right;">Correlation</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Budget vs IMDB rating</td>
-<td style="text-align: right;">0.2359</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Budget vs High rating (rating &gt; 7)</td>
-<td style="text-align: right;">0.2543</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</figure>
-</div>
-</div>
-<p><a href="#tbl-explo-budget2" class="quarto-xref">Table&nbsp;6</a> shows the correlations between film budget and IMDb ratings. Both correlations are relatively weak, suggesting that budget is not strongly associated with film ratings.</p>
-<p>Therefore, budget was not included as a predictor in the final logistic regression model.</p>
-</section>
+<p>Figure <a href="#fig-explo-genre" class="quarto-xref">Figure&nbsp;5</a> shows substantial variation in the proportion of highly rated films across genres. Some genres have much higher proportions of films with ratings above 7 than others.</p>
+<p>This suggests that genre may be an important predictor of high ratings. However, some genres contain relatively few observations, so the corresponding proportions may be less stable and should be interpreted cautiously.</p>
 </section>
 <section id="selection-of-candidate-variables" class="level2">
 <h2 class="anchored" data-anchor-id="selection-of-candidate-variables">Selection of Candidate Variables</h2>
@@ -462,15 +436,15 @@ Table&nbsp;6: Correlation between film budget and IMDB ratings
 - genre.</p>
 <p>These variables will be used as candidate predictors in the logistic regression model.</p>
 </section>
-<section id="logistic-regression-model" class="level2">
-<h2 class="anchored" data-anchor-id="logistic-regression-model">Logistic Regression Model</h2>
+<section id="model-fitting" class="level2">
+<h2 class="anchored" data-anchor-id="model-fitting">Model Fitting</h2>
 <p>To investigate the factors associated with whether a film receives a high IMDB rating, a logistic regression model was fitted.</p>
 <p>The response variable is a binary indicator of whether a film has a rating greater than 7. The candidate predictor variables identified in the exploratory analysis include the number of votes, film length, release year, and genre.</p>
 <div class="cell">
 <div id="tbl-glm-full" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-glm-full-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;7: Logistic regression results (full model)
+Table&nbsp;4: Logistic regression results (full model)
 </figcaption>
 <div aria-describedby="tbl-glm-full-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
@@ -562,7 +536,7 @@ Table&nbsp;7: Logistic regression results (full model)
 </figure>
 </div>
 </div>
-<p>The logistic regression results are summarized in <a href="#tbl-glm-full" class="quarto-xref">Table&nbsp;7</a>. Film length, release year, and several genres show statistically significant associations with the probability of receiving a high IMDB rating (p &lt; 0.05).</p>
+<p>The logistic regression results are summarized in <a href="#tbl-glm-full" class="quarto-xref">Table&nbsp;4</a>. Film length, release year, and several genres show statistically significant associations with the probability of receiving a high IMDB rating (p &lt; 0.05).</p>
 <p>However, the number of votes is not statistically significant (p = 0.949). Therefore, the variable votes was removed and a simplified model was fitted.</p>
 <section id="simplified-logistic-regression-model" class="level3">
 <h3 class="anchored" data-anchor-id="simplified-logistic-regression-model">Simplified Logistic Regression Model</h3>
@@ -571,7 +545,7 @@ Table&nbsp;7: Logistic regression results (full model)
 <div id="tbl-glm-final" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-glm-final-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;8: Logistic regression results (simplified model)
+Table&nbsp;5: Logistic regression results (simplified model)
 </figcaption>
 <div aria-describedby="tbl-glm-final-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
@@ -656,7 +630,7 @@ Table&nbsp;8: Logistic regression results (simplified model)
 </figure>
 </div>
 </div>
-<p><a href="#tbl-glm-final" class="quarto-xref">Table&nbsp;8</a> indicates that film length and release year are significant predictors of whether a film receives a high IMDb rating (p &lt; 0.001).</p>
+<p><a href="#tbl-glm-final" class="quarto-xref">Table&nbsp;5</a> indicates that film length and release year are significant predictors of whether a film receives a high IMDb rating (p &lt; 0.001).</p>
 <p>Longer films tend to be less likely to receive ratings above 7, while more recently released films are slightly more likely to receive higher ratings.</p>
 <p>In addition, differences across genres suggest that the likelihood of receiving high ratings varies depending on film type.</p>
 </section>
@@ -667,7 +641,7 @@ Table&nbsp;8: Logistic regression results (simplified model)
 <div id="tbl-glm-sum" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-glm-sum-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;9: Comparison of coefficients between full and simplified models
+Table&nbsp;6: Comparison of coefficients between full and simplified models
 </figcaption>
 <div aria-describedby="tbl-glm-sum-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
@@ -737,7 +711,7 @@ Table&nbsp;9: Comparison of coefficients between full and simplified models
 </figure>
 </div>
 </div>
-<p><a href="#tbl-glm-sum" class="quarto-xref">Table&nbsp;9</a> compares the estimated coefficients between the full model and the simplified model.</p>
+<p><a href="#tbl-glm-sum" class="quarto-xref">Table&nbsp;6</a> compares the estimated coefficients between the full model and the simplified model.</p>
 <p>The results show that removing the non-significant variable (votes) does not substantially change the estimated coefficients of the remaining predictors. This suggests that the simplified model provides a more parsimonious representation while maintaining similar estimated effects.</p>
 </section>
 </section>
@@ -749,7 +723,7 @@ Table&nbsp;9: Comparison of coefficients between full and simplified models
 <div id="tbl-pred" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl quarto-uncaptioned" id="tbl-pred-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;10
+Table&nbsp;7
 </figcaption>
 <div aria-describedby="tbl-pred-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
@@ -763,7 +737,7 @@ Table&nbsp;10
 </figure>
 </div>
 </div>
-<p><a href="#tbl-pred" class="quarto-xref">Table&nbsp;10</a> shows the predicted probability of receiving a high IMDb rating across different film lengths for selected genres.</p>
+<p><a href="#tbl-pred" class="quarto-xref">Table&nbsp;7</a> shows the predicted probability of receiving a high IMDb rating across different film lengths for selected genres.</p>
 <p>Release year is not shown in the figure because it was held constant at its mean value when calculating predicted probabilities. This allows the effects of film length and genre on the predicted probability to be visualized more clearly while still using the full simplified model.</p>
 <p>The predicted probability generally decreases as film length increases, indicating that longer films are less likely to receive ratings above 7. Differences across genres are also evident, with some genres consistently showing higher predicted probabilities than others across the range of film lengths.</p>
 </section>
@@ -774,7 +748,7 @@ Table&nbsp;10
 <div id="tbl-odds_ratio" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-odds_ratio-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;11: Odds ratios from the simplified logistic regression model
+Table&nbsp;8: Odds ratios from the simplified logistic regression model
 </figcaption>
 <div aria-describedby="tbl-odds_ratio-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
@@ -849,7 +823,7 @@ Table&nbsp;11: Odds ratios from the simplified logistic regression model
 </figure>
 </div>
 </div>
-<p><a href="#tbl-odds_ratio" class="quarto-xref">Table&nbsp;11</a> presents the odds ratios from the simplified logistic regression model.</p>
+<p><a href="#tbl-odds_ratio" class="quarto-xref">Table&nbsp;8</a> presents the odds ratios from the simplified logistic regression model.</p>
 <p>Film length shows an odds ratio below 1, indicating that longer films are less likely to receive ratings above 7. In contrast, more recent films and some genres have higher odds of receiving high ratings.</p>
 </section>
 <section id="model-limitation" class="level2">

@@ -17,11 +17,27 @@ library(dplyr)
 library(tibble)
 ```
 
-# 1 The Dataset {#sec-dataset}
+
+# Which film properties influence whether a film receives an IMDB rating greater than 7? {#sec-study}
+
+
+# 1 Research Question
+
+The aim of this analysis is to examine which film characteristics are associated with whether a film receives an IMDb rating greater than 7 or not.
+
+To address this question, a binary response variable is considered, taking the value 1 if a film has an IMDb rating above 7 and 0 otherwise. The analysis focuses on whether release year, film length, production budget, number of votes, and genre are related to the probability of receiving a high rating.
+
+Given that the response variable is binary, the analysis employs logistic regression as part of the Generalised Linear Model framework.
+
+
+
+
+
+# 2 The Dataset {#sec-dataset}
 
 The dataset used in this analysis comes from the IMDB film database, which provides a variety of information on films that have been released. The data used here represent a subset of the original database.
 
-## 1.1 Inspect the dataset {#sec-insp}
+## 2.1 Inspect the dataset {#sec-insp}
 
 ```{r}
 #| echo: false
@@ -57,7 +73,6 @@ str(movies)
 
 Based on the structure output, the dataset contains 2,847 observations and seven variables. The variables include a mixture of integer, numeric, and character types. Specifically, film_id, year, length, and votes are stored as integer variables, while budget and rating are numeric variables. The genre variable is recorded as a character variable representing the film category. It also suggests that some variables (e.g., length) contain missing values (NA).
 
-
 To further explore the distribution of the variables in the dataset, summary statistics are computed.
 
 ```{r}
@@ -70,12 +85,13 @@ To further explore the distribution of the variables in the dataset, summary sta
 summary(movies)
 ```
 
-Table @tbl-numvars presents the summary statistics for the numerical variables included in the analysis.
 
 ```{r}
 #| echo: false
 #| warning: false
 #| message: false
+#| label: tbl-numvars
+#| tbl-cap: "Summary statistics for numerical variables"
 
 vars <- movies %>% select(film_id, year, length, budget, votes, rating)
 
@@ -97,15 +113,18 @@ numeric_stats <- rbind(
 kable(numeric_stats, caption = "Summary statistics of numerical variables")
 ```
 
+Table @tbl-numvars presents the summary statistics for the numerical variables included in the analysis.
+
 As shown in Table @tbl-numvars, the release year of the films spans from 1898 to 2005, suggesting that the dataset covers a long historical period. Film length varies ranging from 1 to 480 minutes. The production budget ranges between 2.5 and 22.3, while the number of votes shows particularly large variation, with a maximum value of 149,494. In contrast, film ratings appear to be relatively concentrated, with values ranging from 0.8 to 9.2. It is also noteworthy that the variable *length* contains 131 missing observations, whereas the remaining numerical variables do not exhibit missing values.
 
-
-In addition to the numerical variables, the distribution of film genres is also examined. Table @tbl-genre reports the number of films in each genre.
+In addition to the numerical variables, the distribution of film genres is also examined. 
 
 ```{r}
 #| echo: false
 #| warning: false
 #| message: false
+#| label: tbl-genre
+#| tbl-cap: "Distribution of films across genres"
 
 genre_summary <- movies %>%
   count(genre, sort = TRUE)
@@ -113,21 +132,21 @@ genre_summary <- movies %>%
 kable(genre_summary, caption = "Number of films by genre")
 ```
 
-Table @tbl-genre presents the distribution of films across seven genres in the dataset. 
-Action, Drama, and Comedy account for the largest number of observations, whereas genres such as Animation, Documentary, Short, and Romance appear less frequently. 
-This suggests that the dataset is dominated by a few major genres.
+Table @tbl-genre reports the number of films in each genre.
 
+Table @tbl-genre presents the distribution of films across seven genres in the dataset. Action, Drama, and Comedy account for the largest number of observations, whereas genres such as Animation, Documentary, Short, and Romance appear less frequently. This suggests that the dataset is dominated by a few major genres.
 
-## 1.2 Variable descriptions
+## 2.2 Variable descriptions
 
-In this dataset, each film is represented by several variables describing its main characteristics. 
-Table @tbl-var-desc shows the main variables used, including their data types and brief descriptions.
+In this dataset, each film is represented by several variables describing its main characteristics. Table @tbl-var-desc shows the main variables used, including their data types and brief descriptions.
 
 ```{r}
 #| echo: false
 #| warning: false
 #| message: false
-
+#| label: tbl-variable
+#| tbl-cap: "Description of variables in the dataset"
+#| 
 var_desc <- data.frame(
   Variable = c("film_id", "year", "length", "budget", "votes", "genre", "rating"),
   Type = c("Integer", "Integer", "Numeric", "Numeric", "Integer", "Character", "Numeric"),
@@ -145,82 +164,69 @@ var_desc <- data.frame(
 kable(var_desc)
 ```
 
-The dataset contains both numerical and categorical variables describing different aspects of each film. 
-These variables will later be used as predictors in the statistical model.
+Table @tbl-variable shows the variables included in the dataset.
+
+The dataset contains both numerical and categorical variables describing different aspects of each film. These variables will later be used as predictors in the statistical model.
 
 
-# 2 Which film properties influence whether a film receives an IMDB rating greater than 7? {#sec-study}
 
-## 2.1 Research Question
+# 3 Exploratory Analysis
 
-The main aim of this analysis is to investigate which characteristics of films influence whether a film receives an IMDB rating greater than 7.
+Before fitting the GLM, exploratory analysis was carried out to examine the relationships between the response variable and the candidate predictors. This helps to identify broad patterns in the data and provides preliminary support for variable selection in the modelling stage.
 
-In particular, we are interested in examining how variables such as film length, production budget, number of votes, genre, and release year may affect the probability that a film achieves a high rating.
-
-To address this question, we will use a Generalised Linear Model (GLM) with a logistic link function.
-
-## 2.2 Exploratory Plot
-
-Before fitting a statistical model, it is useful to explore the relationships between the response variable and potential predictors.
-
-### Votes and High IMDB Ratings
-
-The number of votes may reflect a film’s popularity or level of audience engagement. To explore this relationship, films were grouped based on their number of votes and the proportion of highly rated films (IMDB rating \> 7) was calculated for each group.
-
-The approximate vote ranges for the five groups are:\
-Very Low: 5-10 votes\
-Low: 10-20 votes\
-Medium: 20-47 votes\
-High: 47-174 votes\
-Very High: above 174 votes.
 
 ```{r}
 #| echo: false
 #| warning: false
 #| message: false
-#| label: tbl-explo-votes
-#| tbl-cap: Proportion of High IMDB Ratings Across Vote Groups
-
-# Calculate vote quantiles
-vote_breaks <- quantile(movies$votes, probs = seq(0,1,0.2), na.rm = TRUE)
-
-# Create vote groups with readable labels
-movies$vote_group <- cut(
-  movies$votes,
-  breaks = vote_breaks,
-  include.lowest = TRUE,
-  labels = c("Very Low", "Low", "Medium", "High", "Very High")
-)
-
 # Create binary response variable
 movies$high_rating <- ifelse(movies$rating > 7, 1, 0)
-
-# Calculate proportion of high ratings in each vote group
-prop_table <- aggregate(high_rating ~ vote_group,
-                        data = movies,
-                        FUN = mean)
-
-ggplot(prop_table, aes(x = vote_group, y = high_rating)) +
-  geom_bar(stat = "identity", fill = "skyblue") +
-  geom_hline(yintercept = mean(movies$high_rating),
-             colour = "red",
-             linetype = "dashed",
-             linewidth = 1) +
-  labs(
-    title = "Proportion of High IMDB Ratings Across Vote Groups",
-    x = "Vote Groups",
-    y = "Proportion of Films with Rating > 7"
-  ) +
-  theme_minimal()
 ```
 
-@tbl-explo-votes shows the proportion of highly rated films across different vote groups. The dashed horizontal line represents the overall proportion of highly rated films in the dataset.
 
-The plot suggests that the proportion of highly rated films varies across vote groups.
+### 3.1 Release Year and High IMDB Ratings
 
-Some groups appear to have slightly higher proportions of highly rated films than others, although the differences are not very large.
+Release year may influence how films are rated. To explore this, films were grouped by release decade and the proportion of highly rated films (IMDB rating \> 7) was calculated for each group.
 
-### Film Length and IMDB Ratings
+Very early decades contained only a small number of films, so films released before 1910 were excluded from this plot to provide a more stable comparison across release periods.
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+#| label: fig-explo-year
+
+movies_year <- movies %>%
+  filter(year >= 1910) %>%
+  mutate(decade = floor(year/10)*10) %>%
+  group_by(decade) %>%
+  summarise(
+    proportion_high = mean(high_rating, na.rm = TRUE),
+    count = n()
+  )
+
+ggplot(movies_year, aes(x = decade, y = proportion_high)) +
+  geom_line(colour = "mediumpurple", linewidth = 1.2) +
+  geom_point(colour = "gold2", size = 2.5) +
+  geom_hline(yintercept = mean(movies$high_rating),
+             linetype = "dashed",
+             colour = "coral",
+             linewidth = 0.8) +
+  labs(
+    title = "Trend in the Proportion of Highly Rated Films by Decade",
+    x = "Decade",
+    y = "Proportion of Films with Rating > 7"
+  ) +
+  theme_bw()
+```
+
+Figure @fig-explo-year shows the proportion of highly rated films across release decades. The dashed horizontal line represents the overall proportion of films with ratings above 7 in the dataset.
+
+The proportion of highly rated films appears to vary across decades. Earlier decades tend to show somewhat higher proportions, while films released between the 1950s and 1980s appear to have relatively lower proportions. However, some early decades contain relatively few films, so these proportions should be interpreted with caution.
+
+
+
+### 3.2 Film Length and IMDB Ratings
 
 Film length may influence audience perception of a movie. To explore this relationship, film length is grouped into five categories using quantile-based cut-offs so that each group contains approximately 20% of the films in the dataset.
 
@@ -228,7 +234,7 @@ Film length may influence audience perception of a movie. To explore this relati
 #| echo: false
 #| warning: false
 #| message: false
-#| label: tbl-explo-length
+#| label: fig-explo-length
 
 movies_length <- subset(movies, !is.na(length) & !is.na(rating) & !is.na(high_rating))
 
@@ -249,78 +255,110 @@ length_prop <- aggregate(
   FUN = mean
 )
 
-ggplot(movies_length, aes(x = length_group, y = rating)) +
-  geom_boxplot(fill = "pink") +
+ggplot(movies_length, aes(x = length, y = high_rating)) +
+  geom_jitter(height = 0.05, alpha = 0.3, colour = "pink") +
+  geom_smooth(method = "glm",
+              method.args = list(family = "binomial"),
+              colour = "navy") +
   labs(
-    title = "Distribution of IMDB Ratings by Film Length",
-    x = "Film Length Group",
-    y = "IMDb Rating"
+    title = "Relationship Between Film Length and Probability of High Rating",
+    x = "Film Length (minutes)",
+    y = "Probability of High Rating"
   ) +
   theme_bw()
 ```
 
-@tbl-explo-length presents the distribution of IMDB ratings across film length groups using boxplots. The median ratings and overall distributions appear relatively similar across most groups.
+Figure @fig-explo-length shows the proportion of highly rated films across film length groups. The overall proportion of films with ratings above 7 is shown by the dashed horizontal line.
 
-Although very short films appear to have slightly higher median ratings, the overall differences between groups are not substantial. This suggests that film length may not have a strong relationship with IMDb ratings.
+Very short films appear to have a higher proportion of ratings above 7 than the other length groups, while the remaining groups are more similar to one another. This suggests that film length may be associated with high ratings, although the pattern may partly reflect differences in genre composition across length groups.
 
-### Release Year and High IMDB Ratings
 
-Release year may influence how films are rated. To explore this, films were grouped by release decade and the proportion of highly rated films (IMDB rating \> 7) was calculated for each group.
 
-Very early decades contained only a small number of films, so films released before 1910 were excluded from this plot to provide a more stable comparison across release periods.
+### 3.3 Production budget and IMDB Ratings
+
+Film budget may also influence how audiences perceive a movie. To explore this possibility, the distribution of film budgets and their relationship with IMDB ratings were examined.
 
 ```{r}
 #| echo: false
 #| warning: false
 #| message: false
-#| label: tbl-explo-year
+#| label: fig-explo-budget1
+#| fig-cap: Relationship between film budget and the probability of receiving a high IMDb rating
 
-movies_year <- subset(movies, year >= 1910)
+ggplot(movies,
+       aes(x = budget,
+           y = high_rating)) +
+  geom_jitter(height = 0.05, alpha = 0.3) +
+  geom_smooth(
+    method = "glm",
+    method.args = list(family="binomial"),
+    colour = "red"
+  ) +
+  theme_bw()
 
-# Create release year break points by decade
-year_min <- floor(min(movies_year$year, na.rm = TRUE) / 10) * 10
-year_max <- ceiling(max(movies_year$year, na.rm = TRUE) / 10) * 10
-year_breaks <- seq(year_min, year_max, by = 10)
+```
 
-# Create readable decade labels
-year_labels <- paste0(year_breaks[-length(year_breaks)], "s")
+Figure @fig-explo-budget shows the relationship between film production budget and the probability of receiving a high IMDb rating. Each point represents an individual film, and the red curve corresponds to the fitted logistic regression line.
 
-# Group films by release decade
-movies_year$year_group <- cut(
-  movies_year$year,
-  breaks = year_breaks,
+The fitted curve shows a gradual upward trend, suggesting that films with larger budgets may be somewhat more likely to receive high ratings. This suggests that budget may be positively associated with the likelihood of a film receiving a high rating.
+
+
+### 3.4 Votes and High IMDB Ratings
+
+The number of votes may reflect a film’s popularity or level of audience engagement. To explore this relationship, films were grouped based on their number of votes and the proportion of highly rated films (IMDB rating \> 7) was calculated for each group.
+
+The approximate vote ranges for the five groups are:\
+Very Low: 5-10 votes\
+Low: 10-20 votes\
+Medium: 20-47 votes\
+High: 47-174 votes\
+Very High: above 174 votes.
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+#| label: fig-explo-votes
+#| fig-cap: Proportion of High IMDB Ratings Across Vote Groups
+
+# Calculate vote quantiles
+vote_breaks <- quantile(movies$votes, probs = seq(0,1,0.2), na.rm = TRUE)
+
+# Create vote groups with readable labels
+movies$vote_group <- cut(
+  movies$votes,
+  breaks = vote_breaks,
   include.lowest = TRUE,
-  right = FALSE,
-  labels = year_labels
+  labels = c("Very Low", "Low", "Medium", "High", "Very High")
 )
 
-# Calculate the proportion of highly rated films in each decade
-year_prop <- aggregate(high_rating ~ year_group,
-                       data = movies_year,
-                       FUN = mean)
+# Calculate proportion of high ratings in each vote group
+prop_table <- aggregate(high_rating ~ vote_group,
+                        data = movies,
+                        FUN = mean)
 
-ggplot(year_prop, aes(x = year_group, y = high_rating)) +
-  geom_col(fill = "orange") +
-  geom_hline(yintercept = mean(movies$high_rating, na.rm = TRUE),
-             colour = "blue",
+ggplot(prop_table, aes(x = vote_group, y = high_rating)) +
+  geom_bar(stat = "identity", fill = "skyblue") +
+  geom_hline(yintercept = mean(movies$high_rating),
+             colour = "red",
              linetype = "dashed",
              linewidth = 1) +
   labs(
-    title = "Proportion of Highly Rated Films by Release Year",
-    x = "Release Year Groups",
+    title = "Proportion of High IMDB Ratings Across Vote Groups",
+    x = "Vote Groups",
     y = "Proportion of Films with Rating > 7"
   ) +
-  theme_bw() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  theme_minimal()
 ```
 
-@tbl-explo-year shows the proportion of highly rated films across different release decades. The dashed horizontal line represents the overall proportion of highly rated films in the dataset.
 
-Earlier decades appear to have slightly higher proportions of highly rated films, while films released from the 1950s to the 1980s show relatively lower proportions.
+Figure @fig-explo-votes shows the proportion of highly rated films across vote groups. The dashed horizontal line represents the overall proportion of films with ratings above 7 in the dataset.
 
-However, the differences between decades are not extremely large, indicating that release year alone may not strongly determine whether a film receives a high IMDb rating.
+The proportion of highly rated films appears to vary across vote groups, with lower-vote groups showing slightly higher proportions than higher-vote groups. Although the pattern is not especially strong, it suggests that the relationship between vote count and high ratings may not be straightforward.
 
-### Film Genre and High IMDB Ratings
+
+
+### 3.5 Film Genre and High IMDB Ratings
 
 Film genre may influence how movies are perceived by audiences. Different genres may attract different audiences and may vary in storytelling style, which could affect IMDB ratings.
 
@@ -328,15 +366,10 @@ Film genre may influence how movies are perceived by audiences. Different genres
 #| echo: false
 #| warning: false
 #| message: false
-#| label: tbl-explo-genre
-
-
-# Split multiple genres into separate rows
-genre_data <- movies %>%
-  separate_rows(genre, sep = "\\|")
+#| label: fig-explo-genre
 
 # Calculate proportion of highly rated films for each genre
-genre_prop <- genre_data %>%
+genre_prop <- movies %>%
   group_by(genre) %>%
   summarise(
     proportion_high = mean(high_rating, na.rm = TRUE),
@@ -348,7 +381,7 @@ ggplot(genre_prop,
            y = proportion_high)) +
   geom_col(fill = "seagreen") +
   geom_hline(yintercept = mean(movies$high_rating, na.rm = TRUE),
-             colour = "purple",
+             colour = "darkred",
              linetype = "dashed",
              linewidth = 1) +
   coord_flip() +
@@ -360,58 +393,14 @@ ggplot(genre_prop,
   theme_bw()
 ```
 
-@tbl-explo-genre shows the proportion of highly rated films across different genres. The dashed horizontal line represents the overall proportion of highly rated films in the dataset.
 
-Some genres appear to have very high or very low proportions of highly rated films.
+Figure @fig-explo-genre shows substantial variation in the proportion of highly rated films across genres. Some genres have much higher proportions of films with ratings above 7 than others.
 
-However, this may partly be due to the small number of films in certain genres, which can lead to unstable proportions. Overall, while some variation exists across genres, genre alone may not strongly determine whether a film receives a high IMDB rating.
+This suggests that genre may be an important predictor of high ratings. However, some genres contain relatively few observations, so the corresponding proportions may be less stable and should be interpreted cautiously.
 
-### Film budget and IMDB Ratings
 
-Film budget may also influence how audiences perceive a movie. 
-To explore this possibility, the distribution of film budgets and their relationship with IMDB ratings were examined.
 
-```{r}
-#| echo: false
-#| warning: false
-#| message: false
-#| label: tbl-explo-budget1
 
-ggplot(movies, aes(x = budget)) +
-  geom_histogram(bins = 30, fill = "brown", color = "white") +
-  labs(
-    title = "Distribution of Film Budgets",
-    x = "Budget",
-    y = "Number of Films"
-  )
-```
-@fig-explo-budget1 shows the distribution of film budgets and indicates that most films fall within a moderate budget range. 
-However, the distribution alone does not provide clear evidence that budget strongly influences whether a film receives a high IMDb rating.
-
-```{r}
-#| echo: false
-#| warning: false
-#| message: false
-#| label: tbl-explo-budget2
-
-budget_cor <- data.frame(
-  Relationship = c("Budget vs IMDB rating", "Budget vs High rating (rating > 7)"),
-  Correlation = c(
-    cor(movies$budget, movies$rating),
-    cor(movies$budget, movies$high_rating)
-  )
-)
-
-knitr::kable(
-  budget_cor,
-  digits = 4,
-  caption = "Correlation between film budget and IMDB ratings"
-)
-```
-@tbl-explo-budget2 shows the correlations between film budget and IMDb ratings. 
-Both correlations are relatively weak, suggesting that budget is not strongly associated with film ratings.
-
-Therefore, budget was not included as a predictor in the final logistic regression model.
 
 ## Selection of Candidate Variables
 
@@ -423,7 +412,7 @@ Based on the exploratory analysis, several variables were identified as potentia
 
 These variables will be used as candidate predictors in the logistic regression model.
 
-## Logistic Regression Model
+## Model Fitting
 
 To investigate the factors associated with whether a film receives a high IMDB rating, a logistic regression model was fitted.
 
