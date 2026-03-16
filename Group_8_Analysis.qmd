@@ -51,7 +51,7 @@ The dataset used in this analysis comes from the IMDb film database, which provi
 #| message: false
 
 # Read the movie dataset from the CSV file
-movies <- read.csv("dataset08.csv")
+movies <- read.csv("~/Desktop/dataset08.csv")
 ```
 
 After loading the dataset, the first few observations are displayed to provide an initial overview of the data.
