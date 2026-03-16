@@ -253,7 +253,7 @@ Table&nbsp;2: Distribution of films across genres
 </section>
 <section id="variable-descriptions" class="level2">
 <h2 class="anchored" data-anchor-id="variable-descriptions">2.2 Variable descriptions</h2>
-<p>In this dataset, each film is represented by several variables describing its main characteristics. Table <strong>?@tbl-var-desc</strong> shows the main variables used, including their data types and brief descriptions.</p>
+<p>In this dataset, each film is represented by several variables describing its main characteristics. Table <a href="#tbl-variable" class="quarto-xref">Table&nbsp;3</a> shows the main variables used, including their data types and brief descriptions.</p>
 <div class="cell">
 <div id="tbl-variable" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -366,19 +366,19 @@ Figure&nbsp;2
 <p>Film budget may also influence how audiences perceive a movie. To explore this possibility, the distribution of film budgets and their relationship with IMDB ratings were examined.</p>
 <div class="cell">
 <div class="cell-output-display">
-<div id="fig-explo-budget1" class="quarto-float quarto-figure quarto-figure-center anchored">
+<div id="fig-explo-budget" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-explo-budget1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="Group_8_Analysis_files/figure-html/fig-explo-budget1-1.png" class="img-fluid figure-img" width="672">
+<div aria-describedby="fig-explo-budget-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="Group_8_Analysis_files/figure-html/fig-explo-budget-1.png" class="img-fluid figure-img" width="672">
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-explo-budget1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-explo-budget-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;3: Relationship between film budget and the probability of receiving a high IMDb rating
 </figcaption>
 </figure>
 </div>
 </div>
 </div>
-<p>Figure <strong>?@fig-explo-budget</strong> shows the relationship between film production budget and the probability of receiving a high IMDb rating. Each point represents an individual film, and the red curve corresponds to the fitted logistic regression line.</p>
+<p>Figure <a href="#fig-explo-budget" class="quarto-xref">Figure&nbsp;3</a> shows the relationship between film production budget and the probability of receiving a high IMDb rating. Each point represents an individual film, and the red curve corresponds to the fitted logistic regression line.</p>
 <p>The fitted curve shows a gradual upward trend, suggesting that films with larger budgets may be somewhat more likely to receive high ratings. This suggests that budget may be positively associated with the likelihood of a film receiving a high rating.</p>
 </section>
 <section id="votes-and-high-imdb-ratings" class="level3">
@@ -427,127 +427,22 @@ Figure&nbsp;5
 <p>Figure <a href="#fig-explo-genre" class="quarto-xref">Figure&nbsp;5</a> shows substantial variation in the proportion of highly rated films across genres. Some genres have much higher proportions of films with ratings above 7 than others.</p>
 <p>This suggests that genre may be an important predictor of high ratings. However, some genres contain relatively few observations, so the corresponding proportions may be less stable and should be interpreted cautiously.</p>
 </section>
-<section id="selection-of-candidate-variables" class="level2">
-<h2 class="anchored" data-anchor-id="selection-of-candidate-variables">Selection of Candidate Variables</h2>
-<p>Based on the exploratory analysis, several variables were identified as potential predictors of whether a film receives an IMDb rating greater than 7. These variables include:<br>
-- votes<br>
-- film length<br>
-- release year<br>
-- genre.</p>
-<p>These variables will be used as candidate predictors in the logistic regression model.</p>
 </section>
-<section id="model-fitting" class="level2">
-<h2 class="anchored" data-anchor-id="model-fitting">Model Fitting</h2>
-<p>To investigate the factors associated with whether a film receives a high IMDB rating, a logistic regression model was fitted.</p>
-<p>The response variable is a binary indicator of whether a film has a rating greater than 7. The candidate predictor variables identified in the exploratory analysis include the number of votes, film length, release year, and genre.</p>
+<section id="model-fitting" class="level1">
+<h1>4 Model Fitting</h1>
+<section id="data-preprocessing" class="level2">
+<h2 class="anchored" data-anchor-id="data-preprocessing">4.1 Data Preprocessing</h2>
+</section>
+<section id="fitting-full-model" class="level2">
+<h2 class="anchored" data-anchor-id="fitting-full-model">4.2 Fitting Full Model</h2>
+<p>A full logistic regression model was first fitted including the number of votes, film length, release year, production budget, and genre as predictors of whether a film received an IMDb rating above 7.</p>
 <div class="cell">
-<div id="tbl-glm-full" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<div id="tbl-full-model" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-glm-full-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-full-model-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Table&nbsp;4: Logistic regression results (full model)
 </figcaption>
-<div aria-describedby="tbl-glm-full-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="cell-output-display">
-<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Variable</th>
-<th style="text-align: right;">Odds Ratio</th>
-<th style="text-align: right;">Std Error</th>
-<th style="text-align: right;">z value</th>
-<th style="text-align: right;">p value</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">(Intercept)</td>
-<td style="text-align: right;">0.000</td>
-<td style="text-align: right;">5.064</td>
-<td style="text-align: right;">-3.115</td>
-<td style="text-align: right;">0.002</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">votes</td>
-<td style="text-align: right;">1.000</td>
-<td style="text-align: right;">0.000</td>
-<td style="text-align: right;">0.064</td>
-<td style="text-align: right;">0.949</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">length</td>
-<td style="text-align: right;">0.956</td>
-<td style="text-align: right;">0.003</td>
-<td style="text-align: right;">-14.971</td>
-<td style="text-align: right;">0.000</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">year</td>
-<td style="text-align: right;">1.009</td>
-<td style="text-align: right;">0.003</td>
-<td style="text-align: right;">3.472</td>
-<td style="text-align: right;">0.001</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">genreAnimation</td>
-<td style="text-align: right;">0.746</td>
-<td style="text-align: right;">0.287</td>
-<td style="text-align: right;">-1.023</td>
-<td style="text-align: right;">0.306</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">genreComedy</td>
-<td style="text-align: right;">9.359</td>
-<td style="text-align: right;">0.138</td>
-<td style="text-align: right;">16.153</td>
-<td style="text-align: right;">0.000</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">genreDocumentary</td>
-<td style="text-align: right;">78.790</td>
-<td style="text-align: right;">0.374</td>
-<td style="text-align: right;">11.688</td>
-<td style="text-align: right;">0.000</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">genreDrama</td>
-<td style="text-align: right;">0.253</td>
-<td style="text-align: right;">0.215</td>
-<td style="text-align: right;">-6.403</td>
-<td style="text-align: right;">0.000</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">genreRomance</td>
-<td style="text-align: right;">0.000</td>
-<td style="text-align: right;">421.588</td>
-<td style="text-align: right;">-0.035</td>
-<td style="text-align: right;">0.972</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">genreShort</td>
-<td style="text-align: right;">17.505</td>
-<td style="text-align: right;">0.747</td>
-<td style="text-align: right;">3.834</td>
-<td style="text-align: right;">0.000</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</figure>
-</div>
-</div>
-<p>The logistic regression results are summarized in <a href="#tbl-glm-full" class="quarto-xref">Table&nbsp;4</a>. Film length, release year, and several genres show statistically significant associations with the probability of receiving a high IMDB rating (p &lt; 0.05).</p>
-<p>However, the number of votes is not statistically significant (p = 0.949). Therefore, the variable votes was removed and a simplified model was fitted.</p>
-<section id="simplified-logistic-regression-model" class="level3">
-<h3 class="anchored" data-anchor-id="simplified-logistic-regression-model">Simplified Logistic Regression Model</h3>
-<p>Since the number of votes was not statistically significant in the full model, it was removed and a simplified logistic regression model was fitted using the remaining predictors: film length, release year, and genre.</p>
-<div class="cell">
-<div id="tbl-glm-final" class="cell quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-tbl figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-glm-final-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;5: Logistic regression results (simplified model)
-</figcaption>
-<div aria-describedby="tbl-glm-final-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div aria-describedby="tbl-full-model-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
 <table class="do-not-create-environment cell caption-top table table-sm table-striped small">
 <thead>
@@ -562,65 +457,79 @@ Table&nbsp;5: Logistic regression results (simplified model)
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">(Intercept)</td>
-<td style="text-align: right;">-15.810</td>
-<td style="text-align: right;">5.035</td>
-<td style="text-align: right;">-3.140</td>
-<td style="text-align: right;">0.002</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">length</td>
-<td style="text-align: right;">-0.044</td>
-<td style="text-align: right;">0.003</td>
-<td style="text-align: right;">-15.037</td>
+<td style="text-align: right;">-23.616</td>
+<td style="text-align: right;">5.789</td>
+<td style="text-align: right;">-4.079</td>
 <td style="text-align: right;">0.000</td>
 </tr>
+<tr class="even">
+<td style="text-align: left;">votes</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">0.508</td>
+<td style="text-align: right;">0.612</td>
+</tr>
 <tr class="odd">
+<td style="text-align: left;">length</td>
+<td style="text-align: right;">-0.057</td>
+<td style="text-align: right;">0.004</td>
+<td style="text-align: right;">-16.003</td>
+<td style="text-align: right;">0.000</td>
+</tr>
+<tr class="even">
 <td style="text-align: left;">year</td>
-<td style="text-align: right;">0.009</td>
+<td style="text-align: right;">0.010</td>
 <td style="text-align: right;">0.003</td>
-<td style="text-align: right;">3.497</td>
+<td style="text-align: right;">3.429</td>
+<td style="text-align: right;">0.001</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">budget</td>
+<td style="text-align: right;">0.510</td>
+<td style="text-align: right;">0.030</td>
+<td style="text-align: right;">16.935</td>
 <td style="text-align: right;">0.000</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">genreAnimation</td>
-<td style="text-align: right;">-0.292</td>
-<td style="text-align: right;">0.286</td>
-<td style="text-align: right;">-1.021</td>
-<td style="text-align: right;">0.307</td>
+<td style="text-align: right;">-0.089</td>
+<td style="text-align: right;">0.321</td>
+<td style="text-align: right;">-0.277</td>
+<td style="text-align: right;">0.782</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">genreComedy</td>
-<td style="text-align: right;">2.237</td>
-<td style="text-align: right;">0.138</td>
-<td style="text-align: right;">16.186</td>
+<td style="text-align: right;">3.109</td>
+<td style="text-align: right;">0.179</td>
+<td style="text-align: right;">17.351</td>
 <td style="text-align: right;">0.000</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">genreDocumentary</td>
-<td style="text-align: right;">4.367</td>
-<td style="text-align: right;">0.374</td>
-<td style="text-align: right;">11.688</td>
+<td style="text-align: right;">5.608</td>
+<td style="text-align: right;">0.443</td>
+<td style="text-align: right;">12.661</td>
 <td style="text-align: right;">0.000</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">genreDrama</td>
-<td style="text-align: right;">-1.376</td>
-<td style="text-align: right;">0.215</td>
-<td style="text-align: right;">-6.404</td>
+<td style="text-align: right;">-1.557</td>
+<td style="text-align: right;">0.239</td>
+<td style="text-align: right;">-6.506</td>
 <td style="text-align: right;">0.000</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">genreRomance</td>
-<td style="text-align: right;">-14.626</td>
-<td style="text-align: right;">421.632</td>
-<td style="text-align: right;">-0.035</td>
-<td style="text-align: right;">0.972</td>
+<td style="text-align: right;">-14.604</td>
+<td style="text-align: right;">391.708</td>
+<td style="text-align: right;">-0.037</td>
+<td style="text-align: right;">0.970</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">genreShort</td>
-<td style="text-align: right;">2.863</td>
-<td style="text-align: right;">0.747</td>
-<td style="text-align: right;">3.835</td>
+<td style="text-align: right;">4.002</td>
+<td style="text-align: right;">0.797</td>
+<td style="text-align: right;">5.021</td>
 <td style="text-align: right;">0.000</td>
 </tr>
 </tbody>
@@ -630,34 +539,135 @@ Table&nbsp;5: Logistic regression results (simplified model)
 </figure>
 </div>
 </div>
-<p><a href="#tbl-glm-final" class="quarto-xref">Table&nbsp;5</a> indicates that film length and release year are significant predictors of whether a film receives a high IMDb rating (p &lt; 0.001).</p>
-<p>Longer films tend to be less likely to receive ratings above 7, while more recently released films are slightly more likely to receive higher ratings.</p>
-<p>In addition, differences across genres suggest that the likelihood of receiving high ratings varies depending on film type.</p>
+<p>The logistic regression results are summarised in <a href="#tbl-full-model" class="quarto-xref">Table&nbsp;4</a>. The number of votes is not statistically significant, while film length, release year, production budget, and several genre categories show significant associations with the probability of receiving a high IMDb rating.</p>
 </section>
-<section id="model-comparison" class="level3">
-<h3 class="anchored" data-anchor-id="model-comparison">Model Comparison</h3>
-<p>To better illustrate the effect of variable selection, the coefficients of the full model and the simplified model are compared in <span class="citation" data-cites="glm-sum">@glm-sum</span>.</p>
+<section id="fitting-reduced-model" class="level2">
+<h2 class="anchored" data-anchor-id="fitting-reduced-model">4.3 Fitting Reduced Model</h2>
+<p>Since the number of votes was not statistically significant in the full model, it was removed and a reduced logistic regression model was fitted using the remaining predictors: film length, release year, production budget, and genre.</p>
 <div class="cell">
-<div id="tbl-glm-sum" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<div id="tbl-reduced-model" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-glm-sum-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;6: Comparison of coefficients between full and simplified models
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-reduced-model-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;5: Logistic regression results (reduced model)
 </figcaption>
-<div aria-describedby="tbl-glm-sum-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div aria-describedby="tbl-reduced-model-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Variable</th>
+<th style="text-align: right;">Estimate</th>
+<th style="text-align: right;">Std Error</th>
+<th style="text-align: right;">z value</th>
+<th style="text-align: right;">p value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">(Intercept)</td>
+<td style="text-align: right;">-23.864</td>
+<td style="text-align: right;">5.767</td>
+<td style="text-align: right;">-4.138</td>
+<td style="text-align: right;">0.000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">length</td>
+<td style="text-align: right;">-0.057</td>
+<td style="text-align: right;">0.004</td>
+<td style="text-align: right;">-16.077</td>
+<td style="text-align: right;">0.000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">year</td>
+<td style="text-align: right;">0.010</td>
+<td style="text-align: right;">0.003</td>
+<td style="text-align: right;">3.483</td>
+<td style="text-align: right;">0.000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">budget</td>
+<td style="text-align: right;">0.510</td>
+<td style="text-align: right;">0.030</td>
+<td style="text-align: right;">16.933</td>
+<td style="text-align: right;">0.000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">genreAnimation</td>
+<td style="text-align: right;">-0.079</td>
+<td style="text-align: right;">0.320</td>
+<td style="text-align: right;">-0.246</td>
+<td style="text-align: right;">0.806</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">genreComedy</td>
+<td style="text-align: right;">3.111</td>
+<td style="text-align: right;">0.179</td>
+<td style="text-align: right;">17.362</td>
+<td style="text-align: right;">0.000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">genreDocumentary</td>
+<td style="text-align: right;">5.605</td>
+<td style="text-align: right;">0.442</td>
+<td style="text-align: right;">12.673</td>
+<td style="text-align: right;">0.000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">genreDrama</td>
+<td style="text-align: right;">-1.557</td>
+<td style="text-align: right;">0.239</td>
+<td style="text-align: right;">-6.509</td>
+<td style="text-align: right;">0.000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">genreRomance</td>
+<td style="text-align: right;">-14.608</td>
+<td style="text-align: right;">391.829</td>
+<td style="text-align: right;">-0.037</td>
+<td style="text-align: right;">0.970</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">genreShort</td>
+<td style="text-align: right;">4.006</td>
+<td style="text-align: right;">0.797</td>
+<td style="text-align: right;">5.028</td>
+<td style="text-align: right;">0.000</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>The reduced model results are shown in <a href="#tbl-reduced-model" class="quarto-xref">Table&nbsp;5</a>. Film length, release year, production budget, and several genre categories remain statistically significant predictors of whether a film achieves an IMDb rating above 7.</p>
+</section>
+<section id="model-comparison" class="level2">
+<h2 class="anchored" data-anchor-id="model-comparison">4.4 Model comparison</h2>
+<section id="coefficient-comparison-table" class="level3">
+<h3 class="anchored" data-anchor-id="coefficient-comparison-table">4.4.1 Coefficient Comparison Table</h3>
+<p>To compare the full and reduced models, the estimated coefficients are presented side by side in <a href="#tbl-model-comp" class="quarto-xref">Table&nbsp;6</a>.</p>
+<div class="cell">
+<div id="tbl-model-comp" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-model-comp-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;6: Comparison of coefficients between full and reduced models
+</figcaption>
+<div aria-describedby="tbl-model-comp-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
 <table class="do-not-create-environment cell caption-top table table-sm table-striped small">
 <thead>
 <tr class="header">
 <th style="text-align: left;">Predictor</th>
 <th style="text-align: right;">Full Model</th>
-<th style="text-align: right;">Final Model</th>
+<th style="text-align: right;">Reduced Model</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">(Intercept)</td>
-<td style="text-align: right;">-15.775</td>
-<td style="text-align: right;">-15.810</td>
+<td style="text-align: right;">-23.616</td>
+<td style="text-align: right;">-23.864</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">votes</td>
@@ -666,43 +676,48 @@ Table&nbsp;6: Comparison of coefficients between full and simplified models
 </tr>
 <tr class="odd">
 <td style="text-align: left;">length</td>
-<td style="text-align: right;">-0.045</td>
-<td style="text-align: right;">-0.044</td>
+<td style="text-align: right;">-0.057</td>
+<td style="text-align: right;">-0.057</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">year</td>
-<td style="text-align: right;">0.009</td>
-<td style="text-align: right;">0.009</td>
+<td style="text-align: right;">0.010</td>
+<td style="text-align: right;">0.010</td>
 </tr>
 <tr class="odd">
+<td style="text-align: left;">budget</td>
+<td style="text-align: right;">0.510</td>
+<td style="text-align: right;">0.510</td>
+</tr>
+<tr class="even">
 <td style="text-align: left;">genreAnimation</td>
-<td style="text-align: right;">-0.293</td>
-<td style="text-align: right;">-0.292</td>
+<td style="text-align: right;">-0.089</td>
+<td style="text-align: right;">-0.079</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;">genreComedy</td>
-<td style="text-align: right;">2.236</td>
-<td style="text-align: right;">2.237</td>
+<td style="text-align: right;">3.109</td>
+<td style="text-align: right;">3.111</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;">genreDocumentary</td>
-<td style="text-align: right;">4.367</td>
-<td style="text-align: right;">4.367</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">genreDrama</td>
-<td style="text-align: right;">-1.376</td>
-<td style="text-align: right;">-1.376</td>
+<td style="text-align: right;">5.608</td>
+<td style="text-align: right;">5.605</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">genreRomance</td>
-<td style="text-align: right;">-14.626</td>
-<td style="text-align: right;">-14.626</td>
+<td style="text-align: left;">genreDrama</td>
+<td style="text-align: right;">-1.557</td>
+<td style="text-align: right;">-1.557</td>
 </tr>
 <tr class="even">
+<td style="text-align: left;">genreRomance</td>
+<td style="text-align: right;">-14.604</td>
+<td style="text-align: right;">-14.608</td>
+</tr>
+<tr class="odd">
 <td style="text-align: left;">genreShort</td>
-<td style="text-align: right;">2.862</td>
-<td style="text-align: right;">2.863</td>
+<td style="text-align: right;">4.002</td>
+<td style="text-align: right;">4.006</td>
 </tr>
 </tbody>
 </table>
@@ -711,110 +726,178 @@ Table&nbsp;6: Comparison of coefficients between full and simplified models
 </figure>
 </div>
 </div>
-<p><a href="#tbl-glm-sum" class="quarto-xref">Table&nbsp;6</a> compares the estimated coefficients between the full model and the simplified model.</p>
-<p>The results show that removing the non-significant variable (votes) does not substantially change the estimated coefficients of the remaining predictors. This suggests that the simplified model provides a more parsimonious representation while maintaining similar estimated effects.</p>
+<p>As shown in <a href="#tbl-model-comp" class="quarto-xref">Table&nbsp;6</a>, removing the non-significant variable votes does not substantially change the estimated coefficients of the remaining predictors. This suggests that the reduced model provides a more parsimonious specification while maintaining a very similar fit to the data.</p>
 </section>
-</section>
-<section id="predicted-probabilities" class="level2">
-<h2 class="anchored" data-anchor-id="predicted-probabilities">Predicted Probabilities</h2>
-<p>To further illustrate the fitted logistic regression model, predicted probabilities were calculated across a range of film lengths while holding release year constant at its mean value.</p>
-<p>Predicted probabilities were plotted for several selected genres to visualize how the probability of receiving a high IMDB rating varies with film length and genre.</p>
+<section id="model-fitting-statistics-table" class="level3">
+<h3 class="anchored" data-anchor-id="model-fitting-statistics-table">4.4.2 Model Fitting Statistics Table</h3>
 <div class="cell">
-<div id="tbl-pred" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<div id="tbl-model-statis" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl quarto-uncaptioned" id="tbl-pred-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;7
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-model-statis-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;7: Model fit statistics for the full and reduced models
 </figcaption>
-<div aria-describedby="tbl-pred-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div aria-describedby="tbl-model-statis-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="Group_8_Analysis_files/figure-html/tbl-pred-1.png" class="img-fluid figure-img" width="672"></p>
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Model</th>
+<th style="text-align: right;">AIC</th>
+<th style="text-align: right;">Residual_Deviance</th>
+<th style="text-align: right;">DF</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Full model</td>
+<td style="text-align: right;">1478.365</td>
+<td style="text-align: right;">1456.365</td>
+<td style="text-align: right;">2705</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Reduced model</td>
+<td style="text-align: right;">1476.593</td>
+<td style="text-align: right;">1456.593</td>
+<td style="text-align: right;">2706</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </figure>
 </div>
 </div>
-</div>
-</figure>
-</div>
-</div>
-<p><a href="#tbl-pred" class="quarto-xref">Table&nbsp;7</a> shows the predicted probability of receiving a high IMDb rating across different film lengths for selected genres.</p>
-<p>Release year is not shown in the figure because it was held constant at its mean value when calculating predicted probabilities. This allows the effects of film length and genre on the predicted probability to be visualized more clearly while still using the full simplified model.</p>
-<p>The predicted probability generally decreases as film length increases, indicating that longer films are less likely to receive ratings above 7. Differences across genres are also evident, with some genres consistently showing higher predicted probabilities than others across the range of film lengths.</p>
+<p>The reduced model has a slightly lower AIC than the full model, indicating a slightly better balance between model fit and model complexity.</p>
 </section>
-<section id="interpretation-of-odds-ratios" class="level2">
-<h2 class="anchored" data-anchor-id="interpretation-of-odds-ratios">Interpretation of Odds Ratios</h2>
-<p>To aid interpretation of the logistic regression model, the estimated coefficients were transformed into odds ratios by taking their exponential values.</p>
+</section>
+<section id="final-model-selection" class="level2">
+<h2 class="anchored" data-anchor-id="final-model-selection">4.5 Final Model Selection</h2>
+<p>A full logistic regression model was first fitted including the number of votes, film length, release year, production budget, and genre as predictors of whether a film received an IMDb rating above 7.</p>
+<p>The coefficient for the number of votes was not statistically significant in the full model. Therefore, a reduced model excluding the number of votes was fitted.</p>
+<p>Model comparison using the likelihood ratio test indicated that removing the number of votes did not significantly worsen the model fit. In addition, the reduced model had a slightly lower AIC (1476.6) compared with the full model (1478.4).</p>
+<p>Therefore, the reduced model was selected as the final model.</p>
+</section>
+<section id="odds-ratio" class="level2">
+<h2 class="anchored" data-anchor-id="odds-ratio">4.6 Odds Ratio</h2>
 <div class="cell">
-<div id="tbl-odds_ratio" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<div id="tbl-or-full" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-odds_ratio-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;8: Odds ratios from the simplified logistic regression model
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-or-full-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;8: Odds ratios for the full logistic regression model
 </figcaption>
-<div aria-describedby="tbl-odds_ratio-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div aria-describedby="tbl-or-full-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
 <table class="do-not-create-environment cell caption-top table table-sm table-striped small">
 <thead>
 <tr class="header">
 <th style="text-align: left;">Predictor</th>
-<th style="text-align: right;">Estimate</th>
-<th style="text-align: right;">Odds Ratio</th>
-<th style="text-align: right;">p value</th>
+<th style="text-align: right;">OR</th>
+<th style="text-align: right;">SE</th>
+<th style="text-align: right;">z</th>
+<th style="text-align: right;">p</th>
+<th style="text-align: right;">CI low</th>
+<th style="text-align: right;">CI high</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">(Intercept)</td>
-<td style="text-align: right;">-15.810</td>
 <td style="text-align: right;">0.000</td>
-<td style="text-align: right;">0.002</td>
+<td style="text-align: right;">5.789</td>
+<td style="text-align: right;">-4.079</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">0.000</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">length</td>
-<td style="text-align: right;">-0.044</td>
-<td style="text-align: right;">0.956</td>
+<td style="text-align: left;">votes</td>
+<td style="text-align: right;">1.000</td>
 <td style="text-align: right;">0.000</td>
+<td style="text-align: right;">0.508</td>
+<td style="text-align: right;">0.612</td>
+<td style="text-align: right;">1.000</td>
+<td style="text-align: right;">1.000</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">year</td>
-<td style="text-align: right;">0.009</td>
-<td style="text-align: right;">1.009</td>
+<td style="text-align: left;">length</td>
+<td style="text-align: right;">0.945</td>
+<td style="text-align: right;">0.004</td>
+<td style="text-align: right;">-16.003</td>
 <td style="text-align: right;">0.000</td>
+<td style="text-align: right;">0.938</td>
+<td style="text-align: right;">0.951</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">year</td>
+<td style="text-align: right;">1.010</td>
+<td style="text-align: right;">0.003</td>
+<td style="text-align: right;">3.429</td>
+<td style="text-align: right;">0.001</td>
+<td style="text-align: right;">1.004</td>
+<td style="text-align: right;">1.016</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">budget</td>
+<td style="text-align: right;">1.666</td>
+<td style="text-align: right;">0.030</td>
+<td style="text-align: right;">16.935</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">1.572</td>
+<td style="text-align: right;">1.770</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">genreAnimation</td>
-<td style="text-align: right;">-0.292</td>
-<td style="text-align: right;">0.747</td>
-<td style="text-align: right;">0.307</td>
+<td style="text-align: right;">0.915</td>
+<td style="text-align: right;">0.321</td>
+<td style="text-align: right;">-0.277</td>
+<td style="text-align: right;">0.782</td>
+<td style="text-align: right;">0.485</td>
+<td style="text-align: right;">1.711</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">genreComedy</td>
-<td style="text-align: right;">2.237</td>
-<td style="text-align: right;">9.364</td>
+<td style="text-align: right;">22.398</td>
+<td style="text-align: right;">0.179</td>
+<td style="text-align: right;">17.351</td>
 <td style="text-align: right;">0.000</td>
+<td style="text-align: right;">15.876</td>
+<td style="text-align: right;">32.061</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">genreDocumentary</td>
-<td style="text-align: right;">4.367</td>
-<td style="text-align: right;">78.785</td>
+<td style="text-align: right;">272.494</td>
+<td style="text-align: right;">0.443</td>
+<td style="text-align: right;">12.661</td>
 <td style="text-align: right;">0.000</td>
+<td style="text-align: right;">120.025</td>
+<td style="text-align: right;">686.293</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">genreDrama</td>
-<td style="text-align: right;">-1.376</td>
-<td style="text-align: right;">0.253</td>
+<td style="text-align: right;">0.211</td>
+<td style="text-align: right;">0.239</td>
+<td style="text-align: right;">-6.506</td>
 <td style="text-align: right;">0.000</td>
+<td style="text-align: right;">0.130</td>
+<td style="text-align: right;">0.333</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">genreRomance</td>
-<td style="text-align: right;">-14.626</td>
 <td style="text-align: right;">0.000</td>
-<td style="text-align: right;">0.972</td>
+<td style="text-align: right;">391.708</td>
+<td style="text-align: right;">-0.037</td>
+<td style="text-align: right;">0.970</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">206.593</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">genreShort</td>
-<td style="text-align: right;">2.863</td>
-<td style="text-align: right;">17.514</td>
+<td style="text-align: right;">54.687</td>
+<td style="text-align: right;">0.797</td>
+<td style="text-align: right;">5.021</td>
 <td style="text-align: right;">0.000</td>
+<td style="text-align: right;">14.108</td>
+<td style="text-align: right;">369.664</td>
 </tr>
 </tbody>
 </table>
@@ -823,22 +906,163 @@ Table&nbsp;8: Odds ratios from the simplified logistic regression model
 </figure>
 </div>
 </div>
-<p><a href="#tbl-odds_ratio" class="quarto-xref">Table&nbsp;8</a> presents the odds ratios from the simplified logistic regression model.</p>
-<p>Film length shows an odds ratio below 1, indicating that longer films are less likely to receive ratings above 7. In contrast, more recent films and some genres have higher odds of receiving high ratings.</p>
+<p>Table <a href="#tbl-or-full" class="quarto-xref">Table&nbsp;8</a> presents the odds ratios from the full logistic regression model. Odds ratios are obtained by exponentiating the estimated coefficients, which makes the effects easier to interpret on the odds scale.</p>
+<div class="cell">
+<div id="tbl-or-reduced" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-or-reduced-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;9: Odds ratios for the reduced logistic regression model
+</figcaption>
+<div aria-describedby="tbl-or-reduced-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Predictor</th>
+<th style="text-align: right;">OR</th>
+<th style="text-align: right;">SE</th>
+<th style="text-align: right;">z</th>
+<th style="text-align: right;">p</th>
+<th style="text-align: right;">CI low</th>
+<th style="text-align: right;">CI high</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">(Intercept)</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">5.767</td>
+<td style="text-align: right;">-4.138</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">0.000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">length</td>
+<td style="text-align: right;">0.945</td>
+<td style="text-align: right;">0.004</td>
+<td style="text-align: right;">-16.077</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">0.938</td>
+<td style="text-align: right;">0.951</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">year</td>
+<td style="text-align: right;">1.010</td>
+<td style="text-align: right;">0.003</td>
+<td style="text-align: right;">3.483</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">1.005</td>
+<td style="text-align: right;">1.016</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">budget</td>
+<td style="text-align: right;">1.665</td>
+<td style="text-align: right;">0.030</td>
+<td style="text-align: right;">16.933</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">1.572</td>
+<td style="text-align: right;">1.769</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">genreAnimation</td>
+<td style="text-align: right;">0.924</td>
+<td style="text-align: right;">0.320</td>
+<td style="text-align: right;">-0.246</td>
+<td style="text-align: right;">0.806</td>
+<td style="text-align: right;">0.491</td>
+<td style="text-align: right;">1.725</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">genreComedy</td>
+<td style="text-align: right;">22.439</td>
+<td style="text-align: right;">0.179</td>
+<td style="text-align: right;">17.362</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">15.905</td>
+<td style="text-align: right;">32.119</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">genreDocumentary</td>
+<td style="text-align: right;">271.756</td>
+<td style="text-align: right;">0.442</td>
+<td style="text-align: right;">12.673</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">119.805</td>
+<td style="text-align: right;">683.371</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">genreDrama</td>
+<td style="text-align: right;">0.211</td>
+<td style="text-align: right;">0.239</td>
+<td style="text-align: right;">-6.509</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">0.130</td>
+<td style="text-align: right;">0.333</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">genreRomance</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">391.829</td>
+<td style="text-align: right;">-0.037</td>
+<td style="text-align: right;">0.970</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">207.390</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">genreShort</td>
+<td style="text-align: right;">54.903</td>
+<td style="text-align: right;">0.797</td>
+<td style="text-align: right;">5.028</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">14.173</td>
+<td style="text-align: right;">370.971</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>Table <a href="#tbl-or-reduced" class="quarto-xref">Table&nbsp;9</a> shows the odds ratios from the reduced logistic regression model. These values indicate how the odds of receiving an IMDb rating above 7 change with each predictor, holding the other variables constant.</p>
 </section>
-<section id="model-limitation" class="level2">
-<h2 class="anchored" data-anchor-id="model-limitation">Model Limitation</h2>
-<p>Although the logistic regression model provides useful insights, several limitations should be noted.</p>
-<p>First, the analysis is based on observational data and therefore cannot establish causal relationships between predictors and IMDb ratings.</p>
-<p>Second, some genres contain relatively small numbers of films, which may affect the stability of the estimated coefficients.</p>
-<p>Finally, other potentially important factors, such as director reputation or production budget, were not included in the dataset and may also influence film ratings.</p>
+<section id="predicted-probabilities" class="level2">
+<h2 class="anchored" data-anchor-id="predicted-probabilities">4.7 Predicted Probabilities</h2>
+<p>To further illustrate the final logistic regression model, predicted probabilities were calculated using the reduced model. Film length was allowed to vary across its observed range, while release year and production budget were held constant at their mean values.</p>
+<p>Predicted probabilities were generated for several selected genres in order to visualise how the probability of receiving an IMDb rating above 7 changes with film length and genre.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-pred-prob" class="quarto-float quarto-figure quarto-figure-center anchored" width="672">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-pred-prob-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="Group_8_Analysis_files/figure-html/fig-pred-prob-1.png" id="fig-pred-prob" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-pred-prob-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Figure <a href="#fig-pred-prob" class="quarto-xref">Figure&nbsp;6</a> shows the predicted probability that a film receives an IMDb rating above 7 across different film lengths for several selected genres.</p>
+<p>The predicted probabilities decrease as film length increases, indicating that longer films are generally less likely to receive ratings above 7 according to the fitted model. This pattern is consistent with the negative coefficient of film length observed in the logistic regression results.</p>
+<p>Differences between genres are also evident. Documentary films consistently show the highest predicted probability of achieving a high rating across most film lengths, followed by comedy films. In contrast, drama and animation films have noticeably lower predicted probabilities across the range of film lengths considered.</p>
+<p>Overall, the figure illustrates how the final logistic regression model combines the effects of film length and genre to predict the probability that a film achieves an IMDb rating above 7, while holding the other predictors constant.</p>
 </section>
-<section id="conclusion" class="level2">
-<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
-<p>This study examined factors associated with whether a film receives a high IMDB rating.</p>
-<p>The results of the logistic regression analysis suggest that film length, release year, and genre are important predictors of high ratings. Longer films tend to have lower probabilities of receiving ratings above 7, while more recently released films show slightly higher probabilities. In addition, some genres such as comedy and documentary are more likely to receive higher ratings compared with the reference genre.</p>
-<p>Overall, the findings suggest that both film characteristics and genre differences play a role in determining audience ratings.</p>
 </section>
+<section id="model-limitation" class="level1">
+<h1>5 Model Limitation</h1>
+<p>This analysis has several limitations. First, the dataset contains only a limited set of film characteristics, including release year, film length, production budget, number of votes, and genre. Other potentially important factors, such as director, cast, country of production, awards, or marketing exposure, are not included in the dataset. As a result, the model may omit variables that are also related to whether a film receives a high IMDb rating.</p>
+<p>Second, missing values in film length were handled by removing incomplete observations. Although this provides a simple and consistent modelling dataset, it reduces the sample size and may introduce bias if the missing values are not completely random.</p>
+<p>Third, some genres contain relatively few films compared with the larger categories. This may lead to less stable coefficient estimates for those smaller groups, so the corresponding genre effects should be interpreted with caution.</p>
+</section>
+<section id="conclusion" class="level1">
+<h1>6 Conclusion</h1>
+<p>This analysis examined which film characteristics are associated with whether a film receives an IMDb rating greater than 7. Because the response variable was binary, logistic regression was used to model the probability of a film achieving a high rating.</p>
+<p>A full model including number of votes, film length, release year, production budget, and genre was first fitted. Since the number of votes was not statistically significant, a reduced model excluding this variable was selected as the final model. The reduced model also showed a slightly lower AIC, indicating a better balance between model fit and model simplicity.</p>
+<p>Overall, the results suggest that film length, release year, production budget, and genre are important predictors of whether a film receives an IMDb rating above 7. In particular, longer films were associated with a lower predicted probability of achieving a high rating, while higher production budgets and more recent release years were associated with a greater likelihood of receiving a rating above 7. Clear differences across genres were also observed, with some genres showing consistently higher predicted probabilities than others.</p>
+<p>In summary, the final logistic regression model provides a useful way to describe how several film characteristics are related to the probability of receiving a high IMDb rating.</p>
 </section>
 
 </main>

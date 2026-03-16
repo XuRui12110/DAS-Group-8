@@ -8,6 +8,8 @@ editor: visual
 #| echo: false
 #| warning: false
 #| message: false
+
+# Load required packages for the analysis
 library(ggplot2)
 library(tidyverse)
 library(gt)
@@ -36,6 +38,8 @@ Given that the response variable is binary, the analysis employs logistic regres
 # 2 The Dataset {#sec-dataset}
 
 The dataset used in this analysis comes from the IMDB film database, which provides a variety of information on films that have been released. The data used here represent a subset of the original database.
+
+
 
 ## 2.1 Inspect the dataset {#sec-insp}
 
@@ -81,7 +85,7 @@ To further explore the distribution of the variables in the dataset, summary sta
 #| message: false
 #| results: false
 
-# Summary statistics of variables
+# Produce summary statistics for all variables
 summary(movies)
 ```
 
@@ -93,23 +97,34 @@ summary(movies)
 #| label: tbl-numvars
 #| tbl-cap: "Summary statistics for numerical variables"
 
-vars <- movies %>% select(film_id, year, length, budget, votes, rating)
 
+# Select only the numerical variables for summary statistics
+numeric_vars <- movies %>% 
+  select(film_id, year, length, budget, votes, rating)
+
+
+# Calculate several descriptive statistics for each variable
 numeric_stats <- rbind(
-  summarise(vars, across(everything(), ~min(.,            na.rm = TRUE))),
-  summarise(vars, across(everything(), ~quantile(., 0.25, na.rm = TRUE))),
-  summarise(vars, across(everything(), ~median(.,         na.rm = TRUE))),
-  summarise(vars, across(everything(), ~mean(.,           na.rm = TRUE))),
-  summarise(vars, across(everything(), ~quantile(., 0.75, na.rm = TRUE))),
-  summarise(vars, across(everything(), ~max(.,            na.rm = TRUE))),
-  summarise(vars, across(everything(), ~sum(is.na(.))))
-) %>%
+  summarise(numeric_vars, across(everything(), ~min(.,            na.rm = TRUE))),
+  summarise(numeric_vars, across(everything(), ~quantile(., 0.25, na.rm = TRUE))),
+  summarise(numeric_vars, across(everything(), ~median(.,         na.rm = TRUE))),
+  summarise(numeric_vars, across(everything(), ~mean(.,           na.rm = TRUE))),
+  summarise(numeric_vars, across(everything(), ~quantile(., 0.75, na.rm = TRUE))),
+  summarise(numeric_vars, across(everything(), ~max(.,            na.rm = TRUE))),
+  summarise(numeric_vars, across(everything(), ~sum(is.na(.))))
+) 
+
+
+# Transpose the table
+numeric_stats <- numeric_stats %>%
   t() %>%
   as.data.frame() %>%
   setNames(c("Min", "1st Qu", "Median", "Mean", "3rd Qu", "Max", "Missing")) %>%
   rownames_to_column("Variable") %>%
   mutate(across(-Variable, ~round(as.numeric(.), 2)))
 
+
+# Display the numerical summary table
 kable(numeric_stats, caption = "Summary statistics of numerical variables")
 ```
 
@@ -126,9 +141,13 @@ In addition to the numerical variables, the distribution of film genres is also 
 #| label: tbl-genre
 #| tbl-cap: "Distribution of films across genres"
 
+
+# Create a frequency table for the categorical variable genre
 genre_summary <- movies %>%
   count(genre, sort = TRUE)
 
+
+# Display the categorical summary table
 kable(genre_summary, caption = "Number of films by genre")
 ```
 
@@ -136,9 +155,11 @@ Table @tbl-genre reports the number of films in each genre.
 
 Table @tbl-genre presents the distribution of films across seven genres in the dataset. Action, Drama, and Comedy account for the largest number of observations, whereas genres such as Animation, Documentary, Short, and Romance appear less frequently. This suggests that the dataset is dominated by a few major genres.
 
+
+
 ## 2.2 Variable descriptions
 
-In this dataset, each film is represented by several variables describing its main characteristics. Table @tbl-var-desc shows the main variables used, including their data types and brief descriptions.
+In this dataset, each film is represented by several variables describing its main characteristics. Table @tbl-variable shows the main variables used, including their data types and brief descriptions.
 
 ```{r}
 #| echo: false
@@ -146,7 +167,9 @@ In this dataset, each film is represented by several variables describing its ma
 #| message: false
 #| label: tbl-variable
 #| tbl-cap: "Description of variables in the dataset"
-#| 
+
+
+# Create a data frame that summarises the main variables in the dataset
 var_desc <- data.frame(
   Variable = c("film_id", "year", "length", "budget", "votes", "genre", "rating"),
   Type = c("Integer", "Integer", "Numeric", "Numeric", "Integer", "Character", "Numeric"),
@@ -161,6 +184,8 @@ var_desc <- data.frame(
   )
 )
 
+
+# Display the variable description table
 kable(var_desc)
 ```
 
@@ -179,7 +204,11 @@ Before fitting the GLM, exploratory analysis was carried out to examine the rela
 #| echo: false
 #| warning: false
 #| message: false
-# Create binary response variable
+
+
+# Create a binary response variable called high_rating
+# Films with an IMDb rating greater than 7 are coded as 1
+# Films with an IMDb rating of 7 or below are coded as 0
 movies$high_rating <- ifelse(movies$rating > 7, 1, 0)
 ```
 
@@ -196,6 +225,8 @@ Very early decades contained only a small number of films, so films released bef
 #| message: false
 #| label: fig-explo-year
 
+
+# Create a summary dataset for the relationship between release year and the proportion of films receiving a high IMDb rating
 movies_year <- movies %>%
   filter(year >= 1910) %>%
   mutate(decade = floor(year/10)*10) %>%
@@ -205,6 +236,8 @@ movies_year <- movies %>%
     count = n()
   )
 
+
+# Plot the proportion of highly rated films across decades
 ggplot(movies_year, aes(x = decade, y = proportion_high)) +
   geom_line(colour = "mediumpurple", linewidth = 1.2) +
   geom_point(colour = "gold2", size = 2.5) +
@@ -236,17 +269,24 @@ Film length may influence audience perception of a movie. To explore this relati
 #| message: false
 #| label: fig-explo-length
 
-movies_length <- subset(movies, !is.na(length) & !is.na(rating) & !is.na(high_rating))
+
+# Remove observations with missing film length values
+movies_length <- subset(movies, !is.na(length))
+
 
 # Create film length groups
+# Create film length groups based on quantiles
 length_breaks <- quantile(movies_length$length, probs = seq(0, 1, 0.2), na.rm = TRUE)
 
+
+# Convert film length into a grouped categorical variable
 movies_length$length_group <- cut(
   movies_length$length,
   breaks = length_breaks,
   include.lowest = TRUE,
   labels = c("Very Short", "Short", "Medium", "Long", "Very Long")
 )
+
 
 # Calculate proportion of high ratings in each length group
 length_prop <- aggregate(
@@ -255,6 +295,8 @@ length_prop <- aggregate(
   FUN = mean
 )
 
+
+# Plot the relationship between film length and the probability of receiving a high IMDb rating
 ggplot(movies_length, aes(x = length, y = high_rating)) +
   geom_jitter(height = 0.05, alpha = 0.3, colour = "pink") +
   geom_smooth(method = "glm",
@@ -282,9 +324,11 @@ Film budget may also influence how audiences perceive a movie. To explore this p
 #| echo: false
 #| warning: false
 #| message: false
-#| label: fig-explo-budget1
+#| label: fig-explo-budget
 #| fig-cap: Relationship between film budget and the probability of receiving a high IMDb rating
 
+
+# Create a scatter plot showing the relationship between production budget and the probability of a film receiving a high IMDb rating
 ggplot(movies,
        aes(x = budget,
            y = high_rating)) +
@@ -295,7 +339,6 @@ ggplot(movies,
     colour = "red"
   ) +
   theme_bw()
-
 ```
 
 Figure @fig-explo-budget shows the relationship between film production budget and the probability of receiving a high IMDb rating. Each point represents an individual film, and the red curve corresponds to the fitted logistic regression line.
@@ -321,16 +364,19 @@ Very High: above 174 votes.
 #| label: fig-explo-votes
 #| fig-cap: Proportion of High IMDB Ratings Across Vote Groups
 
-# Calculate vote quantiles
+
+# Calculate the voting numbers into groups using quintiles
 vote_breaks <- quantile(movies$votes, probs = seq(0,1,0.2), na.rm = TRUE)
 
-# Create vote groups with readable labels
+
+# # Create a categorical variable representing vote groups
 movies$vote_group <- cut(
   movies$votes,
   breaks = vote_breaks,
   include.lowest = TRUE,
   labels = c("Very Low", "Low", "Medium", "High", "Very High")
 )
+
 
 # Calculate proportion of high ratings in each vote group
 prop_table <- aggregate(high_rating ~ vote_group,
@@ -368,7 +414,8 @@ Film genre may influence how movies are perceived by audiences. Different genres
 #| message: false
 #| label: fig-explo-genre
 
-# Calculate proportion of highly rated films for each genre
+
+# Calculate the proportion of highly rated films within each genre
 genre_prop <- movies %>%
   group_by(genre) %>%
   summarise(
@@ -376,6 +423,8 @@ genre_prop <- movies %>%
     count = n()
   )
 
+
+# Create a bar chart showing the proportion of highly rated films by genre
 ggplot(genre_prop,
        aes(x = reorder(genre, proportion_high),
            y = proportion_high)) +
@@ -400,136 +449,287 @@ This suggests that genre may be an important predictor of high ratings. However,
 
 
 
+# 4 Model Fitting
 
 
-## Selection of Candidate Variables
-
-Based on the exploratory analysis, several variables were identified as potential predictors of whether a film receives an IMDb rating greater than 7. These variables include:\
-- votes\
-- film length\
-- release year\
-- genre.
-
-These variables will be used as candidate predictors in the logistic regression model.
-
-## Model Fitting
-
-To investigate the factors associated with whether a film receives a high IMDB rating, a logistic regression model was fitted.
-
-The response variable is a binary indicator of whether a film has a rating greater than 7. The candidate predictor variables identified in the exploratory analysis include the number of votes, film length, release year, and genre.
+## 4.1 Data Preprocessing
 
 ```{r}
 #| echo: false
 #| warning: false
 #| message: false
-#| label: tbl-glm-full
 
-# Fit logistic regression model
+
+# Delete the rows with missing values
+movies_model <- movies %>%
+  select(high_rating, year, length, budget, votes, genre) %>%
+  na.omit()
+
+
+# Convert "genre" to a categorical variable
+movies_model$genre <- as.factor(movies_model$genre)
+
+```
+
+
+
+## 4.2 Fitting Full Model
+
+A full logistic regression model was first fitted including the number of votes, film length, release year, production budget, and genre as predictors of whether a film received an IMDb rating above 7.
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+#| label: tbl-full-model
+
+
+# Fit the full logistic regression model
+# The model includes all selected predictors: votes, length, year, budget and genre
 model_full <- glm(
-  high_rating ~ votes + length + year + genre,
-  data = movies,
+  high_rating ~ votes + length + year + budget + genre,
+  data = movies_model,
   family = binomial
 )
 
-tidy(model_full, exponentiate = TRUE) %>%
+
+# Present the regression results in a tidy table
+tidy(model_full) %>%
   kable(
     digits = 3,
-    col.names = c("Variable","Odds Ratio","Std Error","z value","p value"),
+    col.names = c("Variable", "Estimate", "Std Error", "z value", "p value"),
     caption = "Logistic regression results (full model)"
   )
+
 ```
 
-The logistic regression results are summarized in @tbl-glm-full. Film length, release year, and several genres show statistically significant associations with the probability of receiving a high IMDB rating (p \< 0.05).
+The logistic regression results are summarised in @tbl-full-model. The number of votes is not statistically significant, while film length, release year, production budget, and several genre categories show significant associations with the probability of receiving a high IMDb rating.
 
-However, the number of votes is not statistically significant (p = 0.949). Therefore, the variable votes was removed and a simplified model was fitted.
 
-### Simplified Logistic Regression Model
 
-Since the number of votes was not statistically significant in the full model, it was removed and a simplified logistic regression model was fitted using the remaining predictors: film length, release year, and genre.
+## 4.3 Fitting Reduced Model
+
+Since the number of votes was not statistically significant in the full model, it was removed and a reduced logistic regression model was fitted using the remaining predictors: film length, release year, production budget, and genre.
 
 ```{r}
 #| echo: false
 #| warning: false
 #| message: false
-#| label: tbl-glm-final
+#| label: tbl-reduced-model
 
-# Fit simplified logistic regression model
-model_final <- glm(
-  high_rating ~ length + year + genre,
-  data = movies,
+
+# Fit the reduced logistic regression model
+# This model removes votes and keeps the remaining predictors: length, year, budget and genre
+model_reduced <- glm(
+  high_rating ~ length + year + budget + genre,
+  data = movies_model,
   family = binomial
 )
 
-tidy(model_final) %>%
+
+# Display the reduced model results in a formatted table
+tidy(model_reduced) %>%
   kable(
     digits = 3,
-    col.names = c("Variable","Estimate","Std Error","z value","p value"),
-    caption = "Logistic regression results (simplified model)"
+    col.names = c("Variable", "Estimate", "Std Error", "z value", "p value"),
+    caption = "Logistic regression results (reduced model)"
   )
+
 ```
 
-@tbl-glm-final indicates that film length and release year are significant predictors of whether a film receives a high IMDb rating (p \< 0.001).
+The reduced model results are shown in @tbl-reduced-model. Film length, release year, production budget, and several genre categories remain statistically significant predictors of whether a film achieves an IMDb rating above 7.
 
-Longer films tend to be less likely to receive ratings above 7, while more recently released films are slightly more likely to receive higher ratings.
 
-In addition, differences across genres suggest that the likelihood of receiving high ratings varies depending on film type.
 
-### Model Comparison
+## 4.4 Model comparison
 
-To better illustrate the effect of variable selection, the coefficients of the full model and the simplified model are compared in @glm-sum.
+### 4.4.1 Coefficient Comparison Table
+To compare the full and reduced models, the estimated coefficients are presented side by side in @tbl-model-comp.
 
 ```{r}
 #| echo: false
 #| warning: false
 #| message: false
-#| label: tbl-glm-sum
+#| label: tbl-model-comp
 
-full <- tidy(model_full) %>%
+
+# Extract coefficient estimates from the full model
+full_coef <- tidy(model_full) %>%
   select(term, estimate) %>%
   rename(Full_Model = estimate)
-final <- tidy(model_final) %>%
+
+
+# Extract coefficient estimates from the reduced model
+reduced_coef <- tidy(model_reduced) %>%
   select(term, estimate) %>%
-  rename(Final_Model = estimate)
+  rename(Reduced_Model = estimate)
 
-comparison <- full |> 
-  full_join(final, by = "term")
 
-kable(comparison, digits = 3,
-      col.names = c("Predictor", "Full Model", "Final Model"),
-      caption = "Comparison of coefficients between full and simplified models")
+# Combine the two sets of coefficients into one table
+comparison <- full_coef %>%
+  full_join(reduced_coef, by = "term")
+
+
+# Display the coefficient comparison table
+kable(
+  comparison,
+  digits = 3,
+  col.names = c("Predictor", "Full Model", "Reduced Model"),
+  caption = "Comparison of coefficients between full and reduced models"
+)
+
 ```
 
-@tbl-glm-sum compares the estimated coefficients between the full model and the simplified model.
+As shown in @tbl-model-comp, removing the non-significant variable votes does not substantially change the estimated coefficients of the remaining predictors. This suggests that the reduced model provides a more parsimonious specification while maintaining a very similar fit to the data.
 
-The results show that removing the non-significant variable (votes) does not substantially change the estimated coefficients of the remaining predictors. This suggests that the simplified model provides a more parsimonious representation while maintaining similar estimated effects.
 
-## Predicted Probabilities
-
-To further illustrate the fitted logistic regression model, predicted probabilities were calculated across a range of film lengths while holding release year constant at its mean value.
-
-Predicted probabilities were plotted for several selected genres to visualize how the probability of receiving a high IMDB rating varies with film length and genre.
+### 4.4.2 Model Fitting Statistics Table
 
 ```{r}
 #| echo: false
 #| warning: false
 #| message: false
-#| label: tbl-pred
+#| label: tbl-model-statis
+
+
+# Create a summary table of model fit statistics
+# AIC is used to compare model fit while accounting for model complexity
+# Residual deviance and residual degrees of freedom are also reported
+model_fit <- tibble(
+  Model = c("Full model", "Reduced model"),
+  AIC = c(AIC(model_full), AIC(model_reduced)),
+  Residual_Deviance = c(deviance(model_full), deviance(model_reduced)),
+  DF = c(df.residual(model_full), df.residual(model_reduced))
+)
+
+
+# Display the model fit statistics table
+kable(
+  model_fit,
+  digits = 3,
+  caption = "Model fit statistics for the full and reduced models"
+)
+```
+
+The reduced model has a slightly lower AIC than the full model, indicating a slightly better balance between model fit and model complexity.
+
+
+
+## 4.5 Final Model Selection
+A full logistic regression model was first fitted including the number of votes, film length, release year, production budget, and genre as predictors of whether a film received an IMDb rating above 7.
+
+The coefficient for the number of votes was not statistically significant in the full model. Therefore, a reduced model excluding the number of votes was fitted.
+
+Model comparison using the likelihood ratio test indicated that removing the number of votes did not significantly worsen the model fit. In addition, the reduced model had a slightly lower AIC (1476.6) compared with the full model (1478.4).
+
+Therefore, the reduced model was selected as the final model.
+
+
+
+## 4.6 Odds Ratio
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+#| label: tbl-or-full
+
+
+# Convert the full model results into a tidy table and calculate odds ratios with their confidence intervals 
+or_full <- tidy(model_full, conf.int = TRUE) %>%
+  mutate(
+    OR = exp(estimate),
+    CI_low = exp(conf.low),
+    CI_high = exp(conf.high)
+  ) %>%
+  select(term, OR, std.error, statistic, p.value, CI_low, CI_high)
+
+
+# Display the odds ratio table for the full model
+kable(
+  or_full,
+  digits = 3,
+  col.names = c("Predictor", "OR", "SE", "z", "p", "CI low", "CI high"),
+  caption = "Odds ratios for the full logistic regression model"
+)
+```
+
+Table @tbl-or-full presents the odds ratios from the full logistic regression model. Odds ratios are obtained by exponentiating the estimated coefficients, which makes the effects easier to interpret on the odds scale.
+
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+#| label: tbl-or-reduced
+
+
+# Convert the reduced model results into a tidy table and calculate odds ratios with their confidence intervals
+or_reduced <- tidy(model_reduced, conf.int = TRUE) %>%
+  mutate(
+    OR = exp(estimate),
+    CI_low = exp(conf.low),
+    CI_high = exp(conf.high)
+  ) %>%
+  select(term, OR, std.error, statistic, p.value, CI_low, CI_high)
+
+
+# Display the odds ratio table for the reduced model
+kable(
+  or_reduced,
+  digits = 3,
+  col.names = c("Predictor", "OR", "SE", "z", "p", "CI low", "CI high"),
+  caption = "Odds ratios for the reduced logistic regression model"
+)
+```
+
+Table @tbl-or-reduced shows the odds ratios from the reduced logistic regression model. These values indicate how the odds of receiving an IMDb rating above 7 change with each predictor, holding the other variables constant.
+
+
+
+## 4.7 Predicted Probabilities
+
+To further illustrate the final logistic regression model, predicted probabilities were calculated using the reduced model. Film length was allowed to vary across its observed range, while release year and production budget were held constant at their mean values.
+
+Predicted probabilities were generated for several selected genres in order to visualise how the probability of receiving an IMDb rating above 7 changes with film length and genre.
+
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+#| label: fig-pred-prob
+
 
 # Create new data for prediction
+# Film length is allowed to vary across its observed range,
+# Year and budget are fixed at their mean values
+# Selected genres are included for comparison
 newdata <- expand.grid(
-  length = seq(0, 200, length.out = 100),
-  year = mean(movies$year, na.rm = TRUE),
+  length = seq(
+    min(movies_model$length, na.rm = TRUE),
+    max(movies_model$length, na.rm = TRUE),
+    length.out = 100
+  ),
+  year = mean(movies_model$year, na.rm = TRUE),
+  budget = mean(movies_model$budget, na.rm = TRUE),
   genre = c("Comedy", "Documentary", "Drama", "Animation")
 )
 
-# Compute predicted probabilities from the simplified model
-newdata$pred_prob <- predict(model_final, newdata = newdata, type = "response")
 
-# Plot predicted probabilities
+# Compute predicted probabilities from the reduced model
+newdata$pred_prob <- predict(
+  model_reduced,
+  newdata = newdata,
+  type = "response"
+)
+
+
+# Plot the predicted probabilities by film length and genre
 ggplot(newdata, aes(x = length, y = pred_prob, colour = genre)) +
   geom_line(linewidth = 1.2) +
   labs(
-    title = "Predicted Probability of High IMDB Rating by Film Length and Genre",
+    title = "Predicted Probability of High IMDb Rating by Film Length and Genre",
     x = "Film Length (minutes)",
     y = "Predicted Probability",
     colour = "Genre"
@@ -537,50 +737,32 @@ ggplot(newdata, aes(x = length, y = pred_prob, colour = genre)) +
   theme_bw()
 ```
 
-@tbl-pred shows the predicted probability of receiving a high IMDb rating across different film lengths for selected genres.
+Figure @fig-pred-prob shows the predicted probability that a film receives an IMDb rating above 7 across different film lengths for several selected genres.
 
-Release year is not shown in the figure because it was held constant at its mean value when calculating predicted probabilities. This allows the effects of film length and genre on the predicted probability to be visualized more clearly while still using the full simplified model.
+The predicted probabilities decrease as film length increases, indicating that longer films are generally less likely to receive ratings above 7 according to the fitted model. This pattern is consistent with the negative coefficient of film length observed in the logistic regression results.
 
-The predicted probability generally decreases as film length increases, indicating that longer films are less likely to receive ratings above 7. Differences across genres are also evident, with some genres consistently showing higher predicted probabilities than others across the range of film lengths.
+Differences between genres are also evident. Documentary films consistently show the highest predicted probability of achieving a high rating across most film lengths, followed by comedy films. In contrast, drama and animation films have noticeably lower predicted probabilities across the range of film lengths considered.
 
-## Interpretation of Odds Ratios
+Overall, the figure illustrates how the final logistic regression model combines the effects of film length and genre to predict the probability that a film achieves an IMDb rating above 7, while holding the other predictors constant.
 
-To aid interpretation of the logistic regression model, the estimated coefficients were transformed into odds ratios by taking their exponential values.
 
-```{r}
-#| echo: false
-#| warning: false
-#| message: false
-#| label: tbl-odds_ratio
 
-tidy(model_final) %>%
-  mutate(odds_ratio = exp(estimate)) %>%
-  select(term, estimate, odds_ratio, p.value) %>%
-  kable(
-    digits = 3,
-    col.names = c("Predictor", "Estimate", "Odds Ratio", "p value"),
-    caption = "Odds ratios from the simplified logistic regression model"
-  )
-```
 
-@tbl-odds_ratio presents the odds ratios from the simplified logistic regression model.
+# 5 Model Limitation
+This analysis has several limitations. First, the dataset contains only a limited set of film characteristics, including release year, film length, production budget, number of votes, and genre. Other potentially important factors, such as director, cast, country of production, awards, or marketing exposure, are not included in the dataset. As a result, the model may omit variables that are also related to whether a film receives a high IMDb rating.
 
-Film length shows an odds ratio below 1, indicating that longer films are less likely to receive ratings above 7. In contrast, more recent films and some genres have higher odds of receiving high ratings.
+Second, missing values in film length were handled by removing incomplete observations. Although this provides a simple and consistent modelling dataset, it reduces the sample size and may introduce bias if the missing values are not completely random.
 
-## Model Limitation
+Third, some genres contain relatively few films compared with the larger categories. This may lead to less stable coefficient estimates for those smaller groups, so the corresponding genre effects should be interpreted with caution.
 
-Although the logistic regression model provides useful insights, several limitations should be noted.
 
-First, the analysis is based on observational data and therefore cannot establish causal relationships between predictors and IMDb ratings.
 
-Second, some genres contain relatively small numbers of films, which may affect the stability of the estimated coefficients.
 
-Finally, other potentially important factors, such as director reputation or production budget, were not included in the dataset and may also influence film ratings.
+# 6 Conclusion
+This analysis examined which film characteristics are associated with whether a film receives an IMDb rating greater than 7. Because the response variable was binary, logistic regression was used to model the probability of a film achieving a high rating.
 
-## Conclusion
+A full model including number of votes, film length, release year, production budget, and genre was first fitted. Since the number of votes was not statistically significant, a reduced model excluding this variable was selected as the final model. The reduced model also showed a slightly lower AIC, indicating a better balance between model fit and model simplicity.
 
-This study examined factors associated with whether a film receives a high IMDB rating.
+Overall, the results suggest that film length, release year, production budget, and genre are important predictors of whether a film receives an IMDb rating above 7. In particular, longer films were associated with a lower predicted probability of achieving a high rating, while higher production budgets and more recent release years were associated with a greater likelihood of receiving a rating above 7. Clear differences across genres were also observed, with some genres showing consistently higher predicted probabilities than others.
 
-The results of the logistic regression analysis suggest that film length, release year, and genre are important predictors of high ratings. Longer films tend to have lower probabilities of receiving ratings above 7, while more recently released films show slightly higher probabilities. In addition, some genres such as comedy and documentary are more likely to receive higher ratings compared with the reference genre.
-
-Overall, the findings suggest that both film characteristics and genre differences play a role in determining audience ratings.
+In summary, the final logistic regression model provides a useful way to describe how several film characteristics are related to the probability of receiving a high IMDb rating. 
