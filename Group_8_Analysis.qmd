@@ -51,7 +51,7 @@ The dataset used in this analysis comes from the IMDb film database, which provi
 #| message: false
 
 # Read the movie dataset from the CSV file
-movies <- read.csv("~/Desktop/dataset08.csv")
+movies <- read.csv("dataset08.csv")
 ```
 
 After loading the dataset, the first few observations are displayed to provide an initial overview of the data.
@@ -442,6 +442,41 @@ A full logistic regression model was first fitted including the number of votes,
 #| echo: false
 #| warning: false
 #| message: false
+
+# --- Grouping Small/Insignificant Categories ---
+# Combine Romance (n=31) and Animation (n=178) into 'Other_Genres' 
+# to fix high Standard Error and extreme Odds Ratios (OR)
+library(forcats)
+
+movies_model <- movies_model %>%
+  mutate(genre = fct_collapse(genre, 
+    "Other_Genres" = c("Romance", "Animation")
+  ))
+
+# Set 'Action' as the reference group (largest sample size)
+movies_model$genre <- relevel(movies_model$genre, ref = "Action")
+
+# --- Model Fitting ---
+# Fit the final logistic regression model
+final_model <- glm(high_rating ~ year + length + budget  + genre, 
+                   data = movies_model, 
+                   family = binomial)
+
+# --- Results ---
+# Show model summary with P-values
+summary(final_model)
+
+# Calculate Odds Ratios (OR) and 95% Confidence Intervals
+exp(cbind(OR = coef(final_model), confint(final_model)))
+
+## So it's not necessary to merge romance and animation to the same one 
+## aic is even bigger. And deviance is bigger.
+```
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
 #| label: tbl-full-model
 
 # Fit the full logistic regression model
@@ -620,7 +655,7 @@ newdata <- expand.grid(
   ),
   year = mean(movies_model$year, na.rm = TRUE),   # Fix year at mean value
   budget = mean(movies_model$budget, na.rm = TRUE), # Fix budget at mean value
-  genre = c("Comedy", "Documentary", "Drama", "Animation") # Selected genres
+  genre = c("Comedy", "Documentary", "Drama", "Animation","Action","Romance","Short") # Selected genres
 )
 
 # Generate predicted probabilities from the reduced model
