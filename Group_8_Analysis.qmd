@@ -25,11 +25,11 @@ library(tibble)    # Enhanced data frame tools
 
 # Introduction
 
-This study investigates which film characteristics influence whether a film receives an IMDb rating greater than 7. IMDb ratings are widely used as an indicator of audience perception and overall film quality, as they are based on a large number of user evaluations.
+This study investigates which film characteristics influence whether a film receives an IMDB rating greater than 7. IMDB ratings are widely used as an indicator of audience perception and overall film quality, as they are based on a large number of user evaluations.
 
 Understanding which characteristics are associated with higher ratings may provide insights into what factors contribute to the perceived success of a film. In particular, features such as release year, film length, number of votes and genre may influence how audiences evaluate movies.
 
-To investigate this question, a binary response variable is created to indicate whether a film has an IMDb rating above 7. A logistic regression model within the Generalised Linear Model framework is used to examine how film characteristics influence the probability of receiving a high rating.
+To investigate this question, a binary response variable is created to indicate whether a film has an IMDB rating above 7. A logistic regression model within the Generalised Linear Model framework is used to examine how film characteristics influence the probability of receiving a high rating.
 
 # Research Question
 
@@ -41,7 +41,7 @@ Given that the response variable is binary, the analysis employs logistic regres
 
 # The Dataset {#sec-dataset}
 
-The dataset used in this analysis comes from the IMDb film database, which provides a large collection of information about films and their characteristics. The data analysed here represent a subset of this database containing key variables relevant to film popularity and ratings.
+The dataset used in this analysis comes from the IMDB film database, which provides a large collection of information about films and their characteristics. The data analysed here represent a subset of this database containing key variables relevant to film popularity and ratings.
 
 ## Inspect the dataset {#sec-insp}
 
@@ -317,7 +317,7 @@ The fitted curve shows a gradual upward trend, suggesting that films with larger
 
 ## Votes and High IMDb Ratings
 
-The number of votes may reflect a film’s popularity or level of audience engagement. Since the distribution of votes is highly skewed, with some films receiving far more votes than others, direct comparisons using raw vote counts are difficult. Therefore, films were divided into five groups based on vote quantiles so that each group contains approximately the same number of observations. This grouping allows the proportion of highly rated films to be compared across different levels of audience engagement while reducing the influence of extreme vote counts.
+The number of votes may reflect a film's popularity or level of audience engagement. Since the distribution of votes is highly skewed, with some films receiving far more votes than others, direct comparisons using raw vote counts are difficult. Therefore, films were divided into five groups based on vote quantiles so that each group contains approximately the same number of observations. This grouping allows the proportion of highly rated films to be compared across different levels of audience engagement while reducing the influence of extreme vote counts.
 
 The approximate vote ranges for the five groups are:\
 Very Low: 5-10 votes\
@@ -436,7 +436,7 @@ movies_model$genre <- as.factor(movies_model$genre)
 
 ## Fitting Full Model
 
-A full logistic regression model was first fitted including the number of votes, film length, release year, production budget, and genre as predictors of whether a film received an IMDb rating above 7.
+A full logistic regression model was first fitted including the number of votes, film length, release year, production budget, and genre as predictors of whether a film received an IMDB rating above 7.
 
 ```{r}
 #| echo: false
@@ -461,7 +461,7 @@ tidy(model_full) %>%
 
 ```
 
-The logistic regression results are summarised in @tbl-full-model. The number of votes is not statistically significant, while film length, release year, production budget, and several genre categories show significant associations with the probability of receiving a high IMDb rating.
+The logistic regression results are summarised in @tbl-full-model. The number of votes is not statistically significant, while film length, release year, production budget, and several genre categories show significant associations with the probability of receiving a high IMDB rating.
 
 ## Fitting Reduced Model
 
