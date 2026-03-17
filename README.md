@@ -4,7 +4,7 @@
 This repository contains the collaborative data analysis for **Group 08** as part of the **STATS5085 Data Analysis Skills** course. 
 
 ### Research Question
-**"Which properties of films (such as release year, duration, budget, genre, or popularity) influence whether they are rated by IMDB as greater than 7 or not?"**
+**"Which properties of films (such as release year, duration, budget, genre, or votes) influence whether they are rated by IMDB as greater than 7 or not?"**
 
 To answer this, we utilize a **Generalized Linear Model (GLM)**, specifically **Logistic Regression**, to analyze the factors affecting high film ratings.
 
