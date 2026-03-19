@@ -51,7 +51,7 @@ The dataset used in this analysis comes from the IMDb film database, which provi
 #| message: false
 
 # Read the movie dataset from the CSV file
-movies <- read.csv("~/Desktop/dataset08.csv")
+movies <- read.csv("dataset08.csv")
 ```
 
 After loading the dataset, the first few observations are displayed to provide an initial overview of the data.
@@ -419,24 +419,118 @@ This suggests that genre may be an important predictor of high ratings. However,
 
 ## Data Preprocessing
 
+Before fitting the logistic regression models, a modelling dataset was created by selecting the variables required for the analysis and removing observations with missing values. In this analysis, the response variable is high_rating, while the candidate predictors are release year, film length, production budget, number of votes, and genre.
+
+
 ```{r}
 #| echo: false
 #| warning: false
 #| message: false
 
-# Prepare modelling dataset by selecting relevant variables
+# Create modelling dataset by selecting relevant variables
 movies_model <- movies %>%
   select(high_rating, year, length, budget, votes, genre) %>%
-  na.omit()   # Remove rows containing missing values
+  na.omit()   # Remove rows with any missing values
 
-# Convert genre into a categorical variable (factor)
-movies_model$genre <- as.factor(movies_model$genre)
+# Convert genre into a categorical variable
+movies_model$genre <- factor(movies_model$genre)
 
 ```
+
+The raw distribution of film genres was previously presented in @tbl-genre, and the proportion of highly rated films across genres was illustrated in @fig-explo-genre. However, the logistic regression model uses the complete dataset after removing rows with missing values. Therefore, the reference category for genre should be chosen based on the final modelling sample rather than the raw dataset.
+
+
+To assess which genre is most suitable as the reference category, the distribution of the binary outcome variable (high_rating) across genres is examined in the modelling dataset.
+
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+#| label: tbl-genre-model
+#| tbl-cap: "Distribution of high ratings across genres in the modelling dataset"
+
+
+# Summarise the outcome distribution for each genre in the modelling dataset
+genre_outcome_model <- movies_model %>%
+  group_by(genre) %>%
+  summarise(
+    n = n(),  # n = total number of films in the genre  
+    high_rating_0 = sum(high_rating == 0),  # high_rating_0 = number of films with rating <= 7
+    high_rating_1 = sum(high_rating == 1),  # high_rating_1 = number of films with rating > 7
+    prop_high = mean(high_rating)  # prop_high = proportion of films with rating > 7
+  ) %>%
+  arrange(desc(n))
+
+
+# Display the summary table
+kable(genre_outcome_model, digits = 3)
+```
+
+@tbl-genre-model shows that the genre categories differ significantly in both sample size and outcome distribution. Action has the largest number of observations in the modelling dataset, which makes it a stable category for comparison. In addition, Action contains both low-rated and high-rated films, rather than being concentrated almost entirely in one outcome group.
+
+
+Some genres exhibit much more extreme outcome distributions. For example, Romance contains no films with ratings above 7, while Short and Documentary are heavily concentrated in the high-rating group. Among the remaining genres, Drama is strongly skewed towards low-rated films, whereas Comedy and Animation are relatively more concentrated in higher ratings. Compared with these categories, Action represents a more moderate and less extreme distribution.
+
+
+To visualise these differences more clearly, @fig-genre-model shows the proportion of low-rated and high-rated films within each genre.
+
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+#| label: fig-genre-model
+#| fig-cap: "Proportion of low-rated and high-rated films within each genre in the modelling dataset"
+#| fig-align: center
+#| fig-width: 6
+#| fig-height: 4
+#| out-width: 75%
+
+# Create a proportional bar chart to show the composition of high_rating within each genre
+ggplot(movies_model, 
+       aes(x = reorder(genre, -table(genre)[genre]), fill = factor(high_rating))) +
+  geom_bar(position = "fill") +   # Show proportions instead of counts
+  labs(
+    x = "Genre",
+    y = "Proportion",
+    fill = "High Rating"
+  ) +
+  scale_fill_discrete(
+    labels = c("0 = Rating <= 7", "1 = Rating > 7")
+  ) +
+  theme_bw()
+```
+
+
+For these reasons, Action was selected as the reference category for genre. This choice is supported by three aspects: it remains the largest genre in the modelling dataset, it provides a relatively stable baseline, and it allows for meaningful comparisons across genres.
+
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+
+# Set Action as the reference category for genre
+movies_model$genre <- relevel(movies_model$genre, ref = "Action")
+
+```
+
+
+After preprocessing, the modelling dataset is ready for logistic regression analysis, with genre coded as a categorical variable and Action defined as the baseline category for comparison.
+
+
 
 ## Fitting Full Model
 
 A full logistic regression model was first fitted including the number of votes, film length, release year, production budget, and genre as predictors of whether a film received an IMDb rating above 7.
+
+
+The full model is specified as:
+
+$$
+\text{high\_rating} \sim \text{year} + \text{length} + \text{budget} + \text{votes} + \text{genre}
+$$
 
 ```{r}
 #| echo: false
@@ -446,10 +540,11 @@ A full logistic regression model was first fitted including the number of votes,
 
 # Fit the full logistic regression model
 model_full <- glm(
-  high_rating ~ votes + length + year + budget + genre,
+  high_rating ~ year + length + budget + votes + genre,
   data = movies_model,
   family = binomial
 )
+
 
 # Display model results in a formatted table
 tidy(model_full) %>%
@@ -467,6 +562,12 @@ The logistic regression results are summarised in @tbl-full-model. The number of
 
 Since the number of votes was not statistically significant in the full model, it was removed and a reduced logistic regression model was fitted using the remaining predictors: film length, release year, production budget, and genre.
 
+The reduced model is specified as:
+
+$$
+\text{high\_rating} \sim \text{year} + \text{length} + \text{budget} + \text{genre}
+$$
+
 ```{r}
 #| echo: false
 #| warning: false
@@ -475,7 +576,7 @@ Since the number of votes was not statistically significant in the full model, i
 
 # Fit reduced model excluding votes
 model_reduced <- glm(
-  high_rating ~ length + year + budget + genre,
+  high_rating ~ year + length + budget + genre,
   data = movies_model,
   family = binomial
 )
@@ -526,7 +627,7 @@ kable(
 )
 ```
 
-As shown in @tbl-model-comp, removing the non-significant variable votes does not substantially change the estimated coefficients of the remaining predictors. This suggests that the reduced model provides a more parsimonious specification while maintaining a very similar fit to the data.
+As shown in @tbl-model-comp, removing the non-significant variable votes leads to only negligible changes in the estimated coefficients of the remaining predictors. In particular, the coefficients for release year, film length, production budget, and the genre categories remain very similar in magnitude and direction across the two models. This indicates that excluding votes has little impact on the estimated relationships between the other predictors and the probability of receiving a high IMDB rating.
 
 ### Model Fitting Statistics Table
 
@@ -556,15 +657,17 @@ kable(
 )
 ```
 
-The reduced model has a slightly lower AIC than the full model, indicating a slightly better balance between model fit and model complexity.
+The model fitting statistics for the full and reduced models are presented in @tbl-model-statis. The reduced model has a slightly lower AIC than the full model, which indicates a better balance between model fit and model complexity. Although the residual deviance of the reduced model is marginally higher than that of the full model, the difference is negligible. This indicates that removing the variable votes leads to almost no loss of explanatory power while producing a simpler model.
 
 ## Final Model Selection
 
-The coefficient for the number of votes was not statistically significant in the full model. Therefore, a reduced model excluding this variable was fitted.
+In the full model, the coefficient for the number of votes was not statistically significant. After removing this variable, the reduced model produced a slightly lower AIC and almost the same residual deviance as the full model. In addition, the comparison of coefficients between the two models showed that the estimated effects of the remaining predictors changed very little after excluding votes. Therefore, the reduced model was selected as the final model because it achieves a slight improvement in overall model performance while maintaining a very similar level of fit, and provides a more parsimonious representation of the data.
 
-The reduced model had a slightly lower AIC (1476.6) than the full model (1478.4), indicating a slightly better balance between model fit and model simplicity.
+The final selected model is:
 
-Therefore, the reduced model was selected as the final model.
+$$
+\text{high\_rating} \sim \text{year} + \text{length} + \text{budget} + \text{genre}
+$$
 
 ## Odds Ratios of the Final Model
 
@@ -598,14 +701,14 @@ kable(
 
 To further illustrate the final logistic regression model, predicted probabilities were calculated using the reduced model. Film length was allowed to vary across its observed range, while release year and production budget were held constant at their mean values.
 
-Predicted probabilities were generated for several selected genres in order to visualise how the probability of receiving an IMDb rating above 7 changes with film length and genre.
+Predicted probabilities were generated for several selected genres in order to visualise how the probability of receiving an IMDB rating above 7 changes with film length and genre.
 
 ```{r}
 #| echo: false
 #| warning: false
 #| message: false
 #| label: fig-pred-prob
-#| fig-cap: "Predicted Probability of High IMDb Rating by Film Length and Genre"
+#| fig-cap: "Predicted Probability of High IMDB Rating by Film Length and Genre"
 #| fig-align: center
 #| fig-width: 6
 #| fig-height: 4
@@ -620,7 +723,7 @@ newdata <- expand.grid(
   ),
   year = mean(movies_model$year, na.rm = TRUE),   # Fix year at mean value
   budget = mean(movies_model$budget, na.rm = TRUE), # Fix budget at mean value
-  genre = c("Comedy", "Documentary", "Drama", "Animation") # Selected genres
+  genre = c("Action", "Comedy", "Documentary", "Drama", "Short") # Selected genres
 )
 
 # Generate predicted probabilities from the reduced model
@@ -641,13 +744,13 @@ ggplot(newdata, aes(x = length, y = pred_prob, colour = genre)) +
   theme_bw()
 ```
 
-@fig-pred-prob shows the predicted probability that a film receives an IMDb rating above 7 across different film lengths for several selected genres.
+@fig-pred-prob shows the predicted probability that a film receives an IMDB rating above 7 across different film lengths for several selected genres.
 
 The predicted probabilities decrease as film length increases, indicating that longer films are generally less likely to receive ratings above 7 according to the fitted model. This pattern is consistent with the negative coefficient of film length observed in the logistic regression results.
 
-Differences between genres are also evident. Documentary films consistently show the highest predicted probability of achieving a high rating across most film lengths, followed by comedy films. In contrast, drama and animation films have noticeably lower predicted probabilities across the range of film lengths considered.
+Differences between genres can be clearly seen. Documentary films consistently have the highest probability of receiving a rating above 7 across most film lengths, with Short films also showing relatively high probabilities. Comedy films show moderate probabilities, followed by Action films. In contrast, Drama films have the lowest probability of receiving a rating above 7 across the range of film lengths considered.
 
-Overall, the figure illustrates how the final logistic regression model combines the effects of film length and genre to predict the probability that a film achieves an IMDb rating above 7, while holding the other predictors constant.
+Overall, the figure illustrates how the final logistic regression model combines the effects of film length and genre to predict the probability that a film achieves an IMDB rating above 7, while holding the other predictors constant.
 
 # Model Limitation
 
