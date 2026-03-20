@@ -421,6 +421,7 @@ This suggests that genre may be an important predictor of high ratings. However,
 
 Before fitting the logistic regression models, a modelling dataset was created by selecting the variables required for the analysis and removing observations with missing values. In this analysis, the response variable is high_rating, while the candidate predictors are release year, film length, production budget, number of votes, and genre.
 
+
 ```{r}
 #| echo: false
 #| warning: false
@@ -438,7 +439,9 @@ movies_model$genre <- factor(movies_model$genre)
 
 The raw distribution of film genres was previously presented in @tbl-genre, and the proportion of highly rated films across genres was illustrated in @fig-explo-genre. However, the logistic regression model uses the complete dataset after removing rows with missing values. Therefore, the reference category for genre should be chosen based on the final modelling sample rather than the raw dataset.
 
+
 To assess which genre is most suitable as the reference category, the distribution of the binary outcome variable (high_rating) across genres is examined in the modelling dataset.
+
 
 ```{r}
 #| echo: false
@@ -466,9 +469,12 @@ kable(genre_outcome_model, digits = 3)
 
 @tbl-genre-model shows that the genre categories differ significantly in both sample size and outcome distribution. Action has the largest number of observations in the modelling dataset, which makes it a stable category for comparison. In addition, Action contains both low-rated and high-rated films, rather than being concentrated almost entirely in one outcome group.
 
+
 Some genres exhibit much more extreme outcome distributions. For example, Romance contains no films with ratings above 7, while Short and Documentary are heavily concentrated in the high-rating group. Among the remaining genres, Drama is strongly skewed towards low-rated films, whereas Comedy and Animation are relatively more concentrated in higher ratings. Compared with these categories, Action represents a more moderate and less extreme distribution.
 
+
 To visualise these differences more clearly, @fig-genre-model shows the proportion of low-rated and high-rated films within each genre.
+
 
 ```{r}
 #| echo: false
@@ -496,7 +502,9 @@ ggplot(movies_model,
   theme_bw()
 ```
 
+
 For these reasons, Action was selected as the reference category for genre. This choice is supported by three aspects: it remains the largest genre in the modelling dataset, it provides a relatively stable baseline, and it allows for meaningful comparisons across genres.
+
 
 ```{r}
 #| echo: false
@@ -508,11 +516,15 @@ movies_model$genre <- relevel(movies_model$genre, ref = "Action")
 
 ```
 
+
 After preprocessing, the modelling dataset is ready for logistic regression analysis, with genre coded as a categorical variable and Action defined as the baseline category for comparison.
+
+
 
 ## Fitting Full Model
 
 A full logistic regression model was first fitted including the number of votes, film length, release year, production budget, and genre as predictors of whether a film received an IMDb rating above 7.
+
 
 The full model is specified as:
 
