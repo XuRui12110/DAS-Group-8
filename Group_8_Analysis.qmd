@@ -33,9 +33,9 @@ To investigate this question, a binary response variable is created to indicate 
 
 # Research Question
 
-The aim of this analysis is to examine which film characteristics are associated with whether a film receives an IMDB rating greater than 7 or not.
+The aim of this analysis is to examine which film characteristics are associated with whether a film receives an IMDb rating greater than 7 or not.
 
-To address this question, a binary response variable is considered, taking the value 1 if a film has an IMDB rating above 7 and 0 otherwise. The analysis focuses on whether release year, film length, production budget, number of votes, and genre are related to the probability of receiving a high rating.
+To address this question, a binary response variable is considered, taking the value 1 if a film has an IMDb rating above 7 and 0 otherwise. The analysis focuses on whether release year, film length, production budget, number of votes, and genre are related to the probability of receiving a high rating.
 
 Given that the response variable is binary, the analysis employs logistic regression as part of the Generalised Linear Model framework.
 
@@ -174,7 +174,7 @@ var_desc <- data.frame(
     "Budget for the films production (in $1000000s)",
     "Number of positive votes received by viewers",
     "Genre of the film",
-    "IMDB rating from 0-10"
+    "IMDb rating from 0-10"
   )
 )
 
@@ -197,14 +197,14 @@ Before fitting the GLM, exploratory analysis was carried out to examine the rela
 #| message: false
 
 # Create a binary response variable for the logistic regression
-# 1 = IMDB rating above 7
-# 0 = IMDB rating 7 or below
+# 1 = IMDb rating above 7
+# 0 = IMDb rating 7 or below
 movies$high_rating <- ifelse(movies$rating > 7, 1, 0)
 ```
 
-## Release Year and High IMDB Ratings
+## Release Year and High IMDb Ratings
 
-Release year may influence how films are rated. To explore this, films were grouped by release decade and the proportion of highly rated films (IMDB rating \> 7) was calculated for each group.
+Release year may influence how films are rated. To explore this, films were grouped by release decade and the proportion of highly rated films (IMDb rating \> 7) was calculated for each group.
 
 Very early decades contained only a small number of films, so films released before 1910 were excluded from this plot to provide a more stable comparison across release periods.
 
@@ -248,7 +248,7 @@ ggplot(movies_year, aes(x = decade, y = proportion_high)) +
 
 The proportion of highly rated films appears to vary across decades. Earlier decades tend to show somewhat higher proportions, while films released between the 1950s and 1980s appear to have relatively lower proportions. However, some early decades contain relatively few films, so these proportions should be interpreted with caution.
 
-## Film Length and IMDB Ratings
+## Film Length and IMDb Ratings
 
 Film length may influence audience perception of a movie. To explore this relationship, film length is treated as a continuous variable and the relationship between film length and the probability of receiving a high rating is visualised using a logistic smoothing curve.
 
@@ -257,7 +257,7 @@ Film length may influence audience perception of a movie. To explore this relati
 #| warning: false
 #| message: false
 #| label: fig-explo-length
-#| fig-cap: "Relationship Between Film Length and the Probability of High IMDB Ratings"
+#| fig-cap: "Relationship Between Film Length and the Probability of High IMDb Ratings"
 #| fig-align: center
 #| fig-width: 6
 #| fig-height: 4
@@ -279,20 +279,20 @@ ggplot(movies_length, aes(x = length, y = high_rating)) +
   theme_bw()
 ```
 
-@fig-explo-length shows the relationship between film length and the probability of receiving a high IMDB rating.
+@fig-explo-length shows the relationship between film length and the probability of receiving a high IMDb rating.
 
 The probability of receiving a rating above 7 appears to be higher for shorter films and gradually decreases as film length increases. This suggests that film length may be associated with high ratings, although the pattern may partly reflect differences in genre composition across films of different lengths.
 
-## Production budget and IMDB Ratings
+## Production budget and IMDb Ratings
 
-Film budget may also influence how audiences perceive a movie. To explore this possibility, the distribution of film budgets and their relationship with IMDB ratings were examined.
+Film budget may also influence how audiences perceive a movie. To explore this possibility, the distribution of film budgets and their relationship with IMDb ratings were examined.
 
 ```{r}
 #| echo: false
 #| warning: false
 #| message: false
 #| label: fig-explo-budget
-#| fig-cap: Relationship between film budget and the probability of receiving a high IMDB rating
+#| fig-cap: Relationship between film budget and the probability of receiving a high IMDb rating
 #| fig-align: center
 #| fig-width: 6
 #| fig-height: 4
@@ -311,11 +311,11 @@ ggplot(movies,
   theme_bw()
 ```
 
-@fig-explo-budget shows the relationship between film production budget and the probability of receiving a high IMDB rating. Each point represents an individual film, and the red curve corresponds to the fitted logistic regression line.
+@fig-explo-budget shows the relationship between film production budget and the probability of receiving a high IMDb rating. Each point represents an individual film, and the red curve corresponds to the fitted logistic regression line.
 
 The fitted curve shows a gradual upward trend, suggesting that films with larger budgets may be somewhat more likely to receive high ratings. This suggests that budget may be positively associated with the likelihood of a film receiving a high rating.
 
-## Votes and High IMDB Ratings
+## Votes and High IMDb Ratings
 
 The number of votes may reflect a film's popularity or level of audience engagement. Since the distribution of votes is highly skewed, with some films receiving far more votes than others, direct comparisons using raw vote counts are difficult. Therefore, films were divided into five groups based on vote quantiles so that each group contains approximately the same number of observations. This grouping allows the proportion of highly rated films to be compared across different levels of audience engagement while reducing the influence of extreme vote counts.
 
@@ -331,7 +331,7 @@ Very High: above 174 votes.
 #| warning: false
 #| message: false
 #| label: fig-explo-votes
-#| fig-cap: Proportion of High IMDB Ratings Across Vote Groups
+#| fig-cap: Proportion of High IMDb Ratings Across Vote Groups
 #| fig-align: center
 #| fig-width: 6
 #| fig-height: 4
@@ -371,9 +371,9 @@ ggplot(prop_table, aes(x = vote_group, y = high_rating)) +
 
 The proportion of highly rated films appears to vary across vote groups, with lower-vote groups showing slightly higher proportions than higher-vote groups. Although the pattern is not especially strong, it suggests that the relationship between vote count and high ratings may not be straightforward.
 
-## Film Genre and High IMDB Ratings
+## Film Genre and High IMDb Ratings
 
-Film genre may influence how movies are perceived by audiences. Different genres may attract different audiences and may vary in storytelling style, which could affect IMDB ratings.
+Film genre may influence how movies are perceived by audiences. Different genres may attract different audiences and may vary in storytelling style, which could affect IMDb ratings.
 
 ```{r}
 #| echo: false
@@ -489,7 +489,7 @@ tidy(model_reduced) %>%
   )
 ```
 
-The reduced model results are shown in @tbl-reduced-model. Film length, release year, production budget, and several genre categories remain statistically significant predictors of whether a film achieves an IMDB rating above 7.
+The reduced model results are shown in @tbl-reduced-model. Film length, release year, production budget, and several genre categories remain statistically significant predictors of whether a film achieves an IMDb rating above 7.
 
 ## Model comparison
 
@@ -592,20 +592,20 @@ kable(
 )
 ```
 
-@tbl-or-reduced presents the odds ratios from the final logistic regression model. The odds ratios are obtained by exponentiating the estimated coefficients and provide an interpretable measure of how each predictor affects the odds that a film receives an IMDB rating above 7, holding the other variables constant.
+@tbl-or-reduced presents the odds ratios from the final logistic regression model. The odds ratios are obtained by exponentiating the estimated coefficients and provide an interpretable measure of how each predictor affects the odds that a film receives an IMDb rating above 7, holding the other variables constant.
 
 ## Predicted Probabilities
 
 To further illustrate the final logistic regression model, predicted probabilities were calculated using the reduced model. Film length was allowed to vary across its observed range, while release year and production budget were held constant at their mean values.
 
-Predicted probabilities were generated for several selected genres in order to visualise how the probability of receiving an IMDB rating above 7 changes with film length and genre.
+Predicted probabilities were generated for several selected genres in order to visualise how the probability of receiving an IMDb rating above 7 changes with film length and genre.
 
 ```{r}
 #| echo: false
 #| warning: false
 #| message: false
 #| label: fig-pred-prob
-#| fig-cap: "Predicted Probability of High IMDB Rating by Film Length and Genre"
+#| fig-cap: "Predicted Probability of High IMDb Rating by Film Length and Genre"
 #| fig-align: center
 #| fig-width: 6
 #| fig-height: 4
@@ -641,17 +641,17 @@ ggplot(newdata, aes(x = length, y = pred_prob, colour = genre)) +
   theme_bw()
 ```
 
-@fig-pred-prob shows the predicted probability that a film receives an IMDB rating above 7 across different film lengths for several selected genres.
+@fig-pred-prob shows the predicted probability that a film receives an IMDb rating above 7 across different film lengths for several selected genres.
 
 The predicted probabilities decrease as film length increases, indicating that longer films are generally less likely to receive ratings above 7 according to the fitted model. This pattern is consistent with the negative coefficient of film length observed in the logistic regression results.
 
 Differences between genres are also evident. Documentary films consistently show the highest predicted probability of achieving a high rating across most film lengths, followed by comedy films. In contrast, drama and animation films have noticeably lower predicted probabilities across the range of film lengths considered.
 
-Overall, the figure illustrates how the final logistic regression model combines the effects of film length and genre to predict the probability that a film achieves an IMDB rating above 7, while holding the other predictors constant.
+Overall, the figure illustrates how the final logistic regression model combines the effects of film length and genre to predict the probability that a film achieves an IMDb rating above 7, while holding the other predictors constant.
 
 # Model Limitation
 
-This analysis has several limitations. First, the dataset contains only a limited set of film characteristics, including release year, film length, production budget, number of votes, and genre. Other potentially important factors, such as director, cast, country of production, awards, or marketing exposure, are not included in the dataset. As a result, the model may omit variables that are also related to whether a film receives a high IMDB rating.
+This analysis has several limitations. First, the dataset contains only a limited set of film characteristics, including release year, film length, production budget, number of votes, and genre. Other potentially important factors, such as director, cast, country of production, awards, or marketing exposure, are not included in the dataset. As a result, the model may omit variables that are also related to whether a film receives a high IMDb rating.
 
 Second, missing values in film length were handled by removing incomplete observations. Although this provides a simple and consistent modelling dataset, it reduces the sample size and may introduce bias if the missing values are not completely random.
 
@@ -659,10 +659,10 @@ Third, some genres contain relatively few films compared with the larger categor
 
 # Conclusion
 
-This analysis examined which film characteristics are associated with whether a film receives an IMDB rating greater than 7. Because the response variable was binary, logistic regression was used to model the probability of a film achieving a high rating.
+This analysis examined which film characteristics are associated with whether a film receives an IMDb rating greater than 7. Because the response variable was binary, logistic regression was used to model the probability of a film achieving a high rating.
 
 A full model including number of votes, film length, release year, production budget, and genre was first fitted. Since the number of votes was not statistically significant, a reduced model excluding this variable was selected as the final model. The reduced model also showed a slightly lower AIC, indicating a better balance between model fit and model simplicity.
 
-Overall, the results suggest that film length, release year, production budget, and genre are important predictors of whether a film receives an IMDB rating above 7. In particular, longer films were associated with a lower predicted probability of achieving a high rating, while higher production budgets and more recent release years were associated with a greater likelihood of receiving a rating above 7. Clear differences across genres were also observed, with some genres showing consistently higher predicted probabilities than others.
+Overall, the results suggest that film length, release year, production budget, and genre are important predictors of whether a film receives an IMDb rating above 7. In particular, longer films were associated with a lower predicted probability of achieving a high rating, while higher production budgets and more recent release years were associated with a greater likelihood of receiving a rating above 7. Clear differences across genres were also observed, with some genres showing consistently higher predicted probabilities than others.
 
-In summary, the final logistic regression model provides a useful statistical framework for understanding how several film characteristics are associated with the probability of receiving a high IMDB rating.
+In summary, the final logistic regression model provides a useful statistical framework for understanding how several film characteristics are associated with the probability of receiving a high IMDb rating.
