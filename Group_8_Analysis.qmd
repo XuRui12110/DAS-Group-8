@@ -512,13 +512,30 @@ After preprocessing, the modelling dataset is ready for logistic regression anal
 
 ## Fitting Full Model
 
-A full logistic regression model was first fitted including the number of votes, film length, release year, production budget, and genre as predictors of whether a film received an IMDB rating above 7.
+After data preprocessing, a full logistic regression model was fitted to investigate how film characteristics are associated with the probability of receiving a high IMDB rating.
 
-The full model is specified as:
+In this analysis, the response variable is binary. Let $Y_i$ be the binary response for film $i$, where $Y_i = 1$ if the film has an IMDB rating above 7 and $Y_i = 0$ otherwise. Let $p_i = P(Y_i = 1)$ denote the probability that film $i$ receives a high IMDB rating. Since the response variable is binary, logistic regression with a logit link is used.
+
+The full model can be written as
 
 $$
-\text{high\_rating} \sim \text{year} + \text{length} + \text{budget} + \text{votes} + \text{genre}
+\text{logit}(p_i)=\log\left(\frac{p_i}{1-p_i}\right)
+= \beta_0 + \beta_1 \text{year}_i + \beta_2 \text{length}_i + \beta_3 \text{budget}_i + \beta_4 \text{votes}_i + \text{genre effect}_i
 $$
+
+where:
+
+- $\beta_0$ is the intercept term for the reference genre;
+- $\beta_1$ is the coefficient for release year;
+- $\beta_2$ is the coefficient for film length;
+- $\beta_3$ is the coefficient for production budget;
+- $\beta_4$ is the coefficient for the number of votes;
+- $\text{genre effect}_i$ represents the set of genre indicator terms, with each genre coefficient interpreted relative to the reference genre;
+- $p_i$ is the probability that film $i$ receives a high IMDB rating; 
+- $\text{logit}(p_i)=\log\left(\frac{p_i}{1-p_i}\right)$ is the logit transformation, that is, the logarithm of the odds.
+
+The logit transformation is appropriate because the response variable is binary. Rather than modelling the probability directly, logistic regression models the log-odds of receiving a high rating as a linear combination of the predictors. A positive regression coefficient indicates that the corresponding predictor increases the log-odds, and hence the probability, of a film receiving a high rating, while a negative coefficient indicates the opposite.
+
 
 ```{r}
 #| echo: false
@@ -544,17 +561,33 @@ tidy(model_full) %>%
 
 ```
 
-The logistic regression results are summarised in @tbl-full-model. The number of votes is not statistically significant, while film length, release year, production budget, and several genre categories show significant associations with the probability of receiving a high IMDB rating.
+The coefficient estimates for the full model are presented in @tbl-full-model. Statistical significance is assessed at the 5% level throughout the analysis, so predictors with p-values below 0.05 are regarded as statistically significant. The results show that votes is not statistically significant, suggesting that it does not provide strong evidence of an independent contribution once the other variables are included in the model.
+
+Compared with this, year, length, budget, and several genre categories show statistically significant associations with the odds of receiving a high rating. Overall, the full model suggests that more recent films and films with larger production budgets tend to have higher odds of receiving an IMDB rating above 7, while longer films tend to have lower odds. In addition, the estimated genre effects indicate that the probability of receiving a high rating differs across film genres. These findings provide the basis for considering a simpler model that excludes the non-significant predictor votes.
 
 ## Fitting Reduced Model
 
-Since the number of votes was not statistically significant in the full model, it was removed and a reduced logistic regression model was fitted using the remaining predictors: film length, release year, production budget, and genre.
+Since votes was not statistically significant in the full model, a reduced logistic regression model was fitted after removing this variable. The purpose of removing this variable is to examine whether the model can be improved after excluding votes.
 
-The reduced model is specified as:
+The reduced model can be written as
 
 $$
-\text{high\_rating} \sim \text{year} + \text{length} + \text{budget} + \text{genre}
+\text{logit}(p_i)=\log\left(\frac{p_i}{1-p_i}\right)
+= \beta_0 + \beta_1 \text{year}_i + \beta_2 \text{length}_i + \beta_3 \text{budget}_i + \text{genre effect}_i
 $$
+
+where:
+
+- $\beta_0$ is the intercept term for the reference genre;
+- $\beta_1$ is the coefficient for release year;
+- $\beta_2$ is the coefficient for film length;
+- $\beta_3$ is the coefficient for production budget;
+- $\text{genre effect}_i$ represents the set of genre indicator terms, with each genre coefficient interpreted relative to the reference genre;
+- $p_i$ is the probability that film $i$ receives a high IMDB rating; 
+- $\text{logit}(p_i)=\log\left(\frac{p_i}{1-p_i}\right)$ is the logit transformation, that is, the logarithm of the odds.
+
+Thus, the reduced model retains the key explanatory variables from the full model while excluding the non-significant predictor votes.
+
 
 ```{r}
 #| echo: false
@@ -578,7 +611,9 @@ tidy(model_reduced) %>%
   )
 ```
 
-The reduced model results are shown in @tbl-reduced-model. Film length, release year, production budget, and several genre categories remain statistically significant predictors of whether a film achieves an IMDB rating above 7.
+The coefficient estimates for the reduced model are presented in @tbl-reduced-model. The results show that, after removing votes, the main predictors in the model remain statistically significant at the 5% level. In particular, year and budget still have positive estimated effects, while length still has a negative estimated effect.
+
+The genre coefficients also continue to show differences between genres in their association with high IMDB ratings. Compared with the full model, the overall pattern of results remains stable after excluding votes. This suggests that votes contributes little to the model, and that the reduced model is still able to capture the main relationships between film characteristics and the probability of receiving a high rating.
 
 ## Model comparison
 
@@ -654,8 +689,19 @@ In the full model, the coefficient for the number of votes was not statistically
 The final selected model is:
 
 $$
-\text{high\_rating} \sim \text{year} + \text{length} + \text{budget} + \text{genre}
+\text{logit}(p_i)=\log\left(\frac{p_i}{1-p_i}\right)
+= \beta_0 + \beta_1 \text{year}_i + \beta_2 \text{length}_i + \beta_3 \text{budget}_i + \text{genre effect}_i
 $$
+
+where:
+
+- $\beta_0$ is the intercept term for the reference genre;
+- $\beta_1$ is the coefficient for release year;
+- $\beta_2$ is the coefficient for film length;
+- $\beta_3$ is the coefficient for production budget;
+- $\text{genre effect}_i$ represents the set of genre indicator terms, with each genre coefficient interpreted relative to the reference genre;
+- $p_i$ is the probability that film $i$ receives a high IMDB rating;
+- $\text{logit}(p_i)=\log\left(\frac{p_i}{1-p_i}\right)$ is the logit transformation, that is, the logarithm of the odds.
 
 ## Odds Ratios of the Final Model
 
@@ -691,6 +737,8 @@ To further illustrate the final logistic regression model, predicted probabiliti
 
 Predicted probabilities were generated for several selected genres in order to visualise how the probability of receiving an IMDB rating above 7 changes with film length and genre.
 
+For classification purposes, a default cutoff value of 0.5 was also specified in the prediction code. This means that a film would be classified as predicted high rating if its predicted probability is greater than 0.5, and as not high rating otherwise.
+
 ```{r}
 #| echo: false
 #| warning: false
@@ -721,6 +769,10 @@ newdata$pred_prob <- predict(
   type = "response"
 )
 
+# Set classification rule
+cutoff <- 0.5
+newdata$pred_class <- ifelse(newdata$pred_prob > cutoff, 1, 0)
+
 # Plot predicted probabilities
 ggplot(newdata, aes(x = length, y = pred_prob, colour = genre)) +
   geom_line(linewidth = 1.2) +
@@ -736,24 +788,38 @@ ggplot(newdata, aes(x = length, y = pred_prob, colour = genre)) +
 
 The predicted probabilities decrease as film length increases, indicating that longer films are generally less likely to receive ratings above 7 according to the fitted model. This pattern is consistent with the negative coefficient of film length observed in the logistic regression results.
 
-Differences between genres can be clearly seen. Documentary films consistently have the highest probability of receiving a rating above 7 across most film lengths, with Short films also showing relatively high probabilities. Comedy films show moderate probabilities, followed by Action films. In contrast, Drama films have the lowest probability of receiving a rating above 7 across the range of film lengths considered.
+Differences between genres can be clearly seen. Documentary films consistently have the highest probability of receiving a rating above 7 across most film lengths, with Short films also showing relatively high probabilities. Comedy films show moderate probabilities, followed by Action films. Meanwhile, Drama films have the lowest probability of receiving a rating above 7 across the range of film lengths considered.
 
 Overall, the figure illustrates how the final logistic regression model combines the effects of film length and genre to predict the probability that a film achieves an IMDB rating above 7, while holding the other predictors constant.
 
 # Model Limitation
 
-This analysis has several limitations. First, the dataset contains only a limited set of film characteristics, including release year, film length, production budget, number of votes, and genre. Other potentially important factors, such as director, cast, country of production, awards, or marketing exposure, are not included in the dataset. As a result, the model may omit variables that are also related to whether a film receives a high IMDB rating.
+This analysis has several limitations that should be taken into account when interpreting the results.
 
-Second, missing values in film length were handled by removing incomplete observations. Although this provides a simple and consistent modelling dataset, it reduces the sample size and may introduce bias if the missing values are not completely random.
+First, the dataset contains only a limited number of film characteristics, including release year, film length, production budget, number of votes, and genre. Other potentially important factors, such as director, cast, country of production, awards, marketing exposure, or distribution platform, are not included. As a result, the fitted model may omit variables that also influence whether a film receives an IMDB rating above 7.
 
-Third, some genres contain relatively few films compared with the larger categories. This may lead to less stable coefficient estimates for those smaller groups, so the corresponding genre effects should be interpreted with caution.
+Second, missing values in film length were handled by removing incomplete observations before model fitting. Although this produces a simple and consistent modelling dataset, it reduces the sample size and may introduce bias if the missing values are not completely random.
+
+Third, some genres contain relatively small numbers of films compared with the larger categories. This may lead to less stable coefficient estimates for those smaller groups, so the corresponding genre effects should be interpreted with caution.
+
+Finally, the analysis is based on a binary transformation of the original IMDB rating. While this makes logistic regression suitable and allows a clear distinction between high-rated and non-high-rated films, it also simplifies the original rating scale and may lose some information contained in the full range of ratings.
+
+# Future Work
+
+There are several ways in which this analysis could be extended in future work.
+
+First, more explanatory variables could be added to the model. Including information such as director, actors, awards, country of production, or distribution platform may provide a more complete understanding of the factors associated with high IMDB ratings.
+
+Second, alternative approaches to handling missing data could be considered. Instead of removing incomplete observations, future analysis could explore imputation methods and compare whether the results remain consistent.
+
+Third, the current analysis focuses on main effects only. Future work could investigate whether interaction effects are present. For example, the relationship between film length and rating may differ across genres, or the effect of budget may vary across release periods.
 
 # Conclusion
 
-This analysis examined which film characteristics are associated with whether a film receives an IMDB rating greater than 7. Because the response variable was binary, logistic regression was used to model the probability of a film achieving a high rating.
+This analysis examined which film characteristics are associated with whether a film receives an IMDB rating greater than 7. To answer this question, a binary response variable was created to distinguish films with ratings above 7 from those with ratings of 7 or below, and logistic regression was used to model the probability of receiving a high rating.
 
-A full model including number of votes, film length, release year, production budget, and genre was first fitted. Since the number of votes was not statistically significant, a reduced model excluding this variable was selected as the final model. The reduced model also showed a slightly lower AIC, indicating a better balance between model fit and model simplicity.
+A full model including release year, film length, production budget, number of votes, and genre was first fitted. Since the number of votes was not statistically significant, a reduced model excluding this variable was selected as the final model. The reduced model achieved a slightly lower AIC than the full model, while the estimated effects of the remaining predictors stayed broadly similar. This suggests that removing votes improved the model slightly.
 
-Overall, the results suggest that film length, release year, production budget, and genre are important predictors of whether a film receives an IMDB rating above 7. In particular, longer films were associated with a lower predicted probability of achieving a high rating, while higher production budgets and more recent release years were associated with a greater likelihood of receiving a rating above 7. Clear differences across genres were also observed, with some genres showing consistently higher predicted probabilities than others.
+Overall, the final model indicates that release year, film length, production budget, and genre are important predictors of whether a film receives an IMDB rating above 7. In particular, more recent films and films with larger production budgets tend to have higher odds of receiving a high rating, while longer films tend to have lower odds. Differences across genres were also evident, indicating that genre plays an important role in the probability of a film being highly rated.
 
-In summary, the final logistic regression model provides a useful statistical framework for understanding how several film characteristics are associated with the probability of receiving a high IMDB rating.
+In summary, these findings show that logistic regression provides a useful and interpretable framework for examining how film characteristics are associated with high IMDB ratings. Although the model does not capture every factor that may influence audience evaluation, it provides a clear statistical summary of the main relationships in this dataset.
